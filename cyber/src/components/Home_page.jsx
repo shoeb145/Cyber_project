@@ -11,19 +11,16 @@ const logos = [
 
 const features = [
   {
-    icon: '/feature1.svg',
-    title: 'Customized Security Plans',
-    desc: 'No two properties are alike. We assess your specific risks and goals to deliver.'
+    icon: 'https://framerusercontent.com/images/seJ8TlSbKj72f9xMTuWspjKvBcY.svg',
+    title: 'Experienced Security Professionals',
   },
   {
-    icon: '/feature2.svg',
-    title: 'Rapid Response Team',
-    desc: 'In the face of an emergency, every second counts. Our rapid response units...'
+    icon: 'https://framerusercontent.com/images/wTCnsiGz4b0bCY69QyrGLmFFX8.svg',
+    title: 'Customized Security Solutions',
   },
   {
-    icon: '/feature3.svg',
-    title: 'Peace of Mind, Guaranteed',
-    desc: 'From surveillance cameras and access control systems to mobile patrol...'
+    icon: 'https://framerusercontent.com/images/PWxodD9kWCaeZzH5rWL57m47zU.svg',
+    title: 'Advanced Technology Integration',
   }
 ];
 
@@ -115,7 +112,7 @@ const Home_page = () => {
 
     {/* Features/Benefits */}
     <section className="features-section">
-      <h2 className="section-title">Benefits of choosing Secuby® security</h2>
+      <h2 className="section-title">When it comes to protecting what matters most, <br />you need more than just a security provider you <br /> need a dependable partner.</h2>
       <div className="features-grid">
         {features.map((f, i) => (
           <div className="feature-card" key={i}>
