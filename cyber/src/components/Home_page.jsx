@@ -125,17 +125,17 @@ const Home_page = () => {
     </section>
 
     {/* Stats Bar */}
-    <section className="stats-bar">
+    {/* <section className="stats-bar">
       {stats.map((s, i) => (
         <div className="stat" key={i}>
           <div className="stat-value">{s.value}</div>
           <div className="stat-label">{s.label}</div>
         </div>
       ))}
-    </section>
+    </section> */}
 
     {/* Case Studies */}
-    <section className="case-studies">
+    {/* <section className="case-studies">
       <h2 className="section-title">Proven protection in action</h2>
       <div className="case-grid">
         {caseStudies.map((c, i) => (
@@ -147,10 +147,10 @@ const Home_page = () => {
           </div>
         ))}
       </div>
-    </section>
+    </section> */}
 
     {/* Blog Preview */}
-    <section className="blog-preview">
+    {/* <section className="blog-preview">
       <h2 className="section-title">Latest from our blog</h2>
       <div className="blog-grid">
         {blogs.map((b, i) => (
@@ -162,13 +162,13 @@ const Home_page = () => {
           </div>
         ))}
       </div>
-    </section>
+    </section> */}
 
     {/* CTA */}
-    <section className="cta-section">
+    {/* <section className="cta-section">
       <h2>Your safety is our mission. Your trust is our commitment.</h2>
       <a href="#contact" className="cta-btn">Start Protecting Your Presence</a>
-    </section>
+    </section> */}
   </div>
   );
 };

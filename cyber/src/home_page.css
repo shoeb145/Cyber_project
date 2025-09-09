@@ -113,7 +113,7 @@
     background-position: center;
     position: relative;
     overflow: hidden;
-    opacity: 0.4;
+    opacity: 0.6;
 }
 .feature-card::before {
     content: '';
