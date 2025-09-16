@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import './home_page.css';
 import Hero from './components/Hero';
@@ -7,16 +8,33 @@ import BenefitsSection from './components/BenefitsSection';
 import CounterSection from './components/CounterSection';
 import VideoSection from './components/VideoSection';
 import CaseStudiesSection from './components/CaseStudiesSection';
-function App() {
+import ReviewSection from './components/ReviewSection';
+import Dashboard from './components/Dashboard';
+
+function HomePage() {
   return (
-    <div className="App">
+    <>
       <Hero />
       <Home_page />
       <BenefitsSection />
       <VideoSection />
       <CounterSection />
       <CaseStudiesSection />
-    </div>
+      <ReviewSection />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

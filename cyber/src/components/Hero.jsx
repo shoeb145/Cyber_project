@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const FeatureCard = ({ title, description, icon }) => {
   return (
@@ -49,7 +50,7 @@ const Demo = () => {
           </nav>
 
           <div className="nav-actions">
-            <a className="login-link" href="#login">Log in</a>
+            <Link className="login-link" to="/dashboard">Dashboard</Link>
             <a className="cta primary-cta" href="#contact">Get demo</a>
             <button className="mobile-menu-button" aria-label="Open menu" type="button" aria-expanded="false">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
