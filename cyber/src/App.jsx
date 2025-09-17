@@ -10,6 +10,8 @@ import VideoSection from './components/VideoSection';
 import CaseStudiesSection from './components/CaseStudiesSection';
 import ReviewSection from './components/ReviewSection';
 import Dashboard from './components/Dashboard';
+import Modules from './components/Modules';
+import Paths from './components/Paths';
 
 function HomePage() {
   return (
@@ -32,6 +34,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/modules" element={<Modules />} />
+          <Route path="/paths" element={<Paths />} />
         </Routes>
       </div>
     </Router>

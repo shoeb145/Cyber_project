@@ -1,8 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import './Dashboard.css';
-
-// SVG Icon Components - Cybersecurity themed
+import Layout from './Layout';
 const LogoIcon = () => (
   <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M18 3L4 12L18 21L32 12L18 3Z" fill="#0E1726" stroke="#9AE62E" strokeWidth="2" />
@@ -180,71 +178,7 @@ const CheckIcon = () => (
 
 const Dashboard = () => {
   return (
-    <div className="dashboard-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="logo">
-          <div className="logo-icon">
-            <LogoIcon />
-          </div>
-          <h1>CYBER <span>ACADEMY</span></h1>
-        </div>
-        
-        <div className="user-profile-sidebar">
-          <div className="user-avatar">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar" />
-          </div>
-          <div className="username">John Doe</div>
-          <div className="user-plan">Free</div>
-          <div className="cube-count">
-            <CubeIcon /> 60
-          </div>
-        </div>
-        
-        <div className="sidebar-section">
-          <h3>LEARN</h3>
-          <ul>
-            <li className="active"><DashboardIcon /> Dashboard</li>
-            <li><ModuleIcon /> Modules</li>
-            <li><PathsIcon /> Learning Paths <span className="new-badge">NEW</span></li>
-            <li><LabsIcon /> Practice Labs</li>
-          </ul>
-        </div>
-        
-        <div className="sidebar-section">
-          <h3>MY ACHIEVEMENTS</h3>
-          <ul>
-            <li><CertificateIcon /> My Certificates</li>
-            <li><BadgeIcon /> My Badges</li>
-          </ul>
-        </div>
-        
-        <div className="sidebar-section">
-          <h3>REFERRALS</h3>
-          <ul>
-            <li><InviteIcon /> Invite friends <span className="new-badge">NEW</span></li>
-          </ul>
-        </div>
-        
-        <div className="sidebar-section">
-          <h3>ECOSYSTEM</h3>
-          <ul>
-            <li><JobIcon /> Security Jobs</li>
-            <li><LabsIcon /> Security Labs</li>
-            <li><CtfIcon /> CTF Events</li>
-            <li><BusinessIcon /> Enterprise Solutions</li>
-          </ul>
-        </div>
-        
-        <div className="sidebar-section">
-          <h3>NAVIGATION</h3>
-          <ul>
-            <li><Link to="/"><HomeIcon /> Back to Home</Link></li>
-          </ul>
-        </div>
-      </div>
-      
-      {/* Main content */}
+    <Layout>
       <div className="dashboard-main">
         {/* Top bar */}
         <div className="top-bar">
@@ -428,13 +362,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      
-      {/* Floating buttons */}
-      <button className="chat-btn">💬</button>
-      <button className="getting-started-btn">
-        <span className="icon">?</span> Getting Started
-      </button>
-    </div>
+    </Layout>
   );
 };
 

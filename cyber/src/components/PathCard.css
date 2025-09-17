@@ -1,0 +1,574 @@
+/* PathCard.css - Modern styling for the path card component with white and red theme */
+
+.path-card {
+  background-color: #ffffff; /* White background */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e1e1e1; /* Light border */
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+/* Red accent border on hover */
+.path-card:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #e31837, rgba(227, 24, 55, 0.3));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+/* Subtle glow effect on hover */
+.path-card:after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(227, 24, 55, 0.1) 0%, transparent 100%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.4s ease;
+}
+
+.path-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(227, 24, 55, 0.2);
+  box-shadow: 0 15px 30px rgba(227, 24, 55, 0.1);
+}
+
+.path-card:hover:before {
+  opacity: 1;
+}
+
+.path-card:hover:after {
+  opacity: 1;
+}
+
+/* Path image with modern overlay and effects */
+.path-image {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.path-image:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1); /* Subtle dark overlay */
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.path-card:hover .path-image:before {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.path-card:hover .path-image {
+  transform: scale(1.05);
+}
+
+.path-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.3));
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  z-index: 2;
+}
+
+.path-level {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.path-card:hover .path-level {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.badge-beginner {
+  background-color: rgba(227, 24, 55, 0.1);
+  border: 1px solid rgba(227, 24, 55, 0.3);
+  color: #e31837;
+}
+
+.badge-beginner:before {
+  content: '●';
+  margin-right: 6px;
+  color: #e31837;
+}
+
+.badge-intermediate {
+  background-color: rgba(227, 24, 55, 0.1);
+  border: 1px solid rgba(227, 24, 55, 0.3);
+  color: #e31837;
+}
+
+.badge-intermediate:before {
+  content: '●●';
+  margin-right: 6px;
+  color: #e31837;
+  letter-spacing: 2px;
+}
+
+.badge-advanced {
+  background-color: rgba(227, 24, 55, 0.1);
+  border: 1px solid rgba(227, 24, 55, 0.3);
+  color: #e31837;
+}
+
+.badge-advanced:before {
+  content: '●●●';
+  margin-right: 6px;
+  color: #e31837;
+  letter-spacing: 2px;
+}
+
+.featured-badge {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(227, 24, 55, 0.3);
+  color: #e31837;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.featured-badge:before {
+  content: '★';
+  margin-right: 6px;
+  font-size: 0.85rem;
+  color: #e31837;
+}
+
+.path-card:hover .featured-badge {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Path content with modern styling */
+.path-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+}
+
+/* Subtle background pattern */
+.path-content:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(227, 24, 55, 0.02) 0%, transparent 2%);
+  background-size: 20px 20px;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.path-category {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.path-category:after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  opacity: 0.6;
+  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #e31837, transparent);
+}
+
+.path-card:hover .path-category:after {
+  width: 60px;
+}
+
+.path-category .category-icon {
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+}
+
+.path-card:hover .category-icon {
+  transform: scale(1.15);
+}
+
+.path-category span {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #e31837; /* Red text for all categories */
+}
+
+.path-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  color: #333333; /* Dark text */
+  transition: all 0.3s ease;
+}
+
+.path-card:hover .path-title {
+  transform: translateX(5px);
+  color: #e31837; /* Red on hover */
+}
+
+/* Difficulty meter styling */
+.difficulty-meter {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 5px 10px;
+  background: #f8f9fa; /* Light gray background */
+  border-radius: 6px;
+  border: 1px solid #e1e1e1; /* Light border */
+}
+
+.difficulty-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555555; /* Dark gray text */
+  margin-right: 10px;
+}
+
+.difficulty-bars {
+  display: flex;
+  gap: 3px;
+}
+
+.difficulty-bars .bar {
+  width: 12px;
+  height: 16px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.difficulty-bars .bar.filled {
+  background-color: #e31837; /* Red filled bars */
+  box-shadow: 0 0 10px rgba(227, 24, 55, 0.3);
+}
+
+.difficulty-bars .bar.empty {
+  background-color: #e1e1e1; /* Light gray empty bars */
+  border: 1px solid #d0d0d0;
+}
+
+.path-card:hover .difficulty-bars .bar.filled {
+  transform: scaleY(1.2);
+}
+
+.path-description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #555555; /* Dark gray text */
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+/* Path statistics */
+.path-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  padding-top: 15px;
+  border-top: 1px solid #e1e1e1; /* Light border */
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  color: #555555; /* Dark gray text */
+  transition: all 0.3s ease;
+}
+
+.path-card:hover .stat {
+  transform: translateY(-2px);
+}
+
+.stat svg {
+  margin-right: 8px;
+  color: #888888; /* Medium gray icons */
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.path-card:hover .stat svg {
+  transform: scale(1.15);
+}
+
+.stat:hover svg {
+  color: #e31837; /* Red on hover */
+}
+
+.stat.certification svg {
+  color: #e31837; /* Red for certification */
+}
+
+.stat:hover.certification svg {
+  color: #c41230; /* Darker red on hover */
+}
+
+/* Progress bar */
+.path-progress {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: #e1e1e1; /* Light gray background */
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1px solid #d0d0d0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e31837, #c41230); /* Red gradient */
+  border-radius: 10px;
+  transition: width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+}
+
+/* Animated progress pulse */
+.progress-fill:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: progressPulse 2s infinite;
+  opacity: 0;
+}
+
+.path-card:hover .progress-fill:after {
+  opacity: 1;
+}
+
+@keyframes progressPulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  color: #555555; /* Dark gray text */
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-text:after {
+  content: attr(data-status);
+  font-size: 0.75rem;
+  background-color: rgba(227, 24, 55, 0.1); /* Light red background */
+  color: #e31837; /* Red text */
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Action buttons */
+.path-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.start-btn {
+  flex: 1;
+  background: linear-gradient(135deg, #e31837, #c41230); /* Red gradient */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(227, 24, 55, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Button glow effect */
+.start-btn:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s ease;
+}
+
+.start-btn:hover {
+  background: linear-gradient(135deg, #c41230, #a00f26); /* Darker red gradient */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(227, 24, 55, 0.4);
+}
+
+.start-btn:hover:before {
+  left: 100%;
+}
+
+/* Favorite button */
+.favorite-btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa; /* Light gray background */
+  border: 1px solid #e1e1e1; /* Light border */
+  border-radius: 8px;
+  color: #888888; /* Medium gray icon */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.favorite-btn:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(227, 24, 55, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.favorite-btn:hover {
+  background-color: rgba(227, 24, 55, 0.05); /* Very light red background */
+  color: #e31837; /* Red icon */
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(227, 24, 55, 0.2);
+  border-color: rgba(227, 24, 55, 0.3);
+}
+
+.favorite-btn:hover:after {
+  opacity: 1;
+}
+
+.favorite-btn.active {
+  color: #e31837; /* Red icon */
+  background-color: rgba(227, 24, 55, 0.1); /* Light red background */
+  border-color: rgba(227, 24, 55, 0.3);
+  box-shadow: 0 0 15px rgba(227, 24, 55, 0.3);
+}
+
+.favorite-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.favorite-btn:hover svg {
+  transform: scale(1.2);
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  .path-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .path-stats {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .path-image {
+    height: 150px;
+  }
+  
+  .path-title {
+    font-size: 1.1rem;
+  }
+  
+  .path-content {
+    padding: 18px;
+  }
+  
+  .start-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .favorite-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
