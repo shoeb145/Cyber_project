@@ -12,6 +12,8 @@ import ReviewSection from './components/ReviewSection';
 import Dashboard from './components/Dashboard';
 import Modules from './components/Modules';
 import Paths from './components/Paths';
+import Certificates from './components/Certificates';
+import Badges from './components/Badges';
 
 function HomePage() {
   return (
@@ -36,6 +38,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/modules" element={<Modules />} />
           <Route path="/paths" element={<Paths />} />
+          <Route path="/certificates" element={<Certificates />} />
+          <Route path="/badges" element={<Badges />} />
         </Routes>
       </div>
     </Router>

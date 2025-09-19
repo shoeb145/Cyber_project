@@ -166,8 +166,12 @@ const Layout = ({ children }) => {
         <div className="sidebar-section">
           <h3>MY ACHIEVEMENTS</h3>
           <ul>
-            <li><CertificateIcon /> My Certificates</li>
-            <li><BadgeIcon /> My Badges</li>
+            <li className={location.pathname === '/certificates' ? 'active' : ''}>
+              <Link to="/certificates"><CertificateIcon /> My Certificates</Link>
+            </li>
+            <li className={location.pathname === '/badges' ? 'active' : ''}>
+              <Link to="/badges"><BadgeIcon /> My Badges</Link>
+            </li>
           </ul>
         </div>
         
