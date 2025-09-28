@@ -14,6 +14,7 @@ import Modules from './components/Modules';
 import Paths from './components/Paths';
 import Certificates from './components/Certificates';
 import Badges from './components/Badges';
+import ShadcnDemo from './components/ShadcnDemo';
 
 function HomePage() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/paths" element={<Paths />} />
           <Route path="/certificates" element={<Certificates />} />
           <Route path="/badges" element={<Badges />} />
+          <Route path="/shadcn-demo" element={<ShadcnDemo />} />
         </Routes>
       </div>
     </Router>

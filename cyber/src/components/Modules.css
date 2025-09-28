@@ -1,5 +1,60 @@
 /* Modules.css - Main styling for the modules page */
 
+/* Modern container utilities for the new design */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1200px;
+}
+
+/* Line clamp utilities for text truncation */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom gradient text for the hero title */
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.text-transparent {
+  color: transparent;
+}
+
+/* Additional utilities for smooth animations */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
+
+.group:hover .group-hover\:bg-primary\/90 {
+  background-color: hsl(var(--primary) / 0.9);
+}
+
+.group:hover .group-hover\:text-primary {
+  color: hsl(var(--primary));
+}
+
+/* Legacy styles for the old modules page */
 .modules-container {
   padding: 2rem;
   background-color: #ffffff; /* White background */
