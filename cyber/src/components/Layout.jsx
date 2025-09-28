@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Layout.css';
 
@@ -124,12 +124,36 @@ const CubeIcon = () => (
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
   
   return (
     <div className="layout-container">
+      {/* Mobile Header with Hamburger */}
+      <div className="mobile-header">
+        <div className="mobile-logo">
+          <div className="logo-icon">
+            <LogoIcon />
+          </div>
+          <h1>CYBER <span>ACADEMY</span></h1>
+        </div>
+        <button 
+          className="hamburger-btn"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle navigation menu"
+        >
+          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <div className="sidebar">
-        <div className="logo">
+      <div className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div className="logo desktop-only">
           <div className="logo-icon">
             <LogoIcon />
           </div>
@@ -199,6 +223,14 @@ const Layout = ({ children }) => {
           </ul>
         </div>
       </div>
+      
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="mobile-overlay"
+          onClick={toggleMobileMenu}
+        ></div>
+      )}
       
       {/* Main content */}
       <div className="main-content">
