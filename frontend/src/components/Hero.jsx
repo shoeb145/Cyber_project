@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const FeatureCard = ({ title, description, icon }) => {
   return (
     <div className="feature-card">
-      <div className={`feature-icon ${icon || ''}`} aria-hidden="true" />
+      <div className={`feature-icon ${icon || ""}`} aria-hidden="true" />
       <h3 className="feature-title">{title}</h3>
       <p className="feature-description">{description}</p>
     </div>
@@ -14,7 +14,9 @@ const FeatureCard = ({ title, description, icon }) => {
 const TestimonialCard = ({ quote, author, position }) => {
   return (
     <div className="testimonial-card">
-      <div className="quote-mark" aria-hidden="true">"</div>
+      <div className="quote-mark" aria-hidden="true">
+        "
+      </div>
       <p className="testimonial-quote">{quote}</p>
       <div className="testimonial-author">
         <div className="author-name">{author}</div>
@@ -28,57 +30,101 @@ const Demo = () => {
   return (
     <div id="background">
       <div className="secuby-container">
-      <header className="header" role="banner">
-        <div className="header-inner">
-          <div className="brand">
-            <a href="#" className="brand-link" aria-label="Secuby home">
-              <img
-                src="https://framerusercontent.com/images/U2I7fLtX2zVVMKW9URIZ9olX0.svg"
-                alt="Secuby Logo"
-                className="logo"
-              />
-            </a>
-          </div>
-
-          <nav className="main-nav" aria-label="Primary">
-            <ul className="nav-list">
-              <li><a className="nav-link" href="#features">All Pages</a></li>
-              <li><a className="nav-link" href="#solutions">Services</a></li>
-              <li><a className="nav-link" href="#pricing">Review</a></li>
-              <li><a className="nav-link" href="#about">Contact</a></li>
-            </ul>
-          </nav>
-
-          <div className="nav-actions">
-            <Link className="login-link" to="/dashboard">Dashboard</Link>
-            <a className="cta primary-cta" href="#contact">Get demo</a>
-            <button className="mobile-menu-button" aria-label="Open menu" type="button" aria-expanded="false">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main>
-        <section className="hero-section" id="hero">
-          <div className="hero-content">
-            <div className="tag-pill">
-              <span className="tag-text">Trusted Protection for Every Doorstep</span>
+        <header className="header" role="banner">
+          <div className="header-inner">
+            <div className="brand">
+              <a href="#" className="brand-link" aria-label="Secuby home">
+                <img
+                  src="https://framerusercontent.com/images/U2I7fLtX2zVVMKW9URIZ9olX0.svg"
+                  alt="Secuby Logo"
+                  className="logo"
+                />
+              </a>
             </div>
-            <h1 className="hero-title">Reliable Cyber Security for Your Peace of Mind</h1>
 
-            <p className="hero-subtitle">
-              At Redzone we provide trusted, around-the-clock security solutions tailored to protect.
-            </p>
+            <nav className="main-nav" aria-label="Primary">
+              <ul className="nav-list">
+                <li>
+                  <a className="nav-link" href="#features">
+                    All Pages
+                  </a>
+                </li>
+                <li>
+                  <a className="nav-link" href="#solutions">
+                    Services
+                  </a>
+                </li>
+                <li>
+                  <a className="nav-link" href="#pricing">
+                    Review
+                  </a>
+                </li>
+                <li>
+                  <a className="nav-link" href="#about">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </nav>
 
-            <div className="cta-buttons">
-              <a href="#demo" className="primary-button">Start Protecting Your Presence</a>
+            <div className="nav-actions">
+              <Link className="login-link" to="/signup">
+                Dashboard
+              </Link>
+              <a className="cta primary-cta" href="#contact">
+                Get demo
+              </a>
+              <button
+                className="mobile-menu-button"
+                aria-label="Open menu"
+                type="button"
+                aria-expanded="false"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M3 6h18M3 12h18M3 18h18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
+        </header>
 
-          {/* <div className="hero-image" aria-hidden="true">
+        <main>
+          <section className="hero-section" id="hero">
+            <div className="hero-content">
+              <div className="tag-pill">
+                <span className="tag-text">
+                  Trusted Protection for Every Doorstep
+                </span>
+              </div>
+              <h1 className="hero-title">
+                Reliable Cyber Security for Your Peace of Mind
+              </h1>
+
+              <p className="hero-subtitle">
+                At Redzone we provide trusted, around-the-clock security
+                solutions tailored to protect.
+              </p>
+
+              <div className="cta-buttons">
+                <a href="#demo" className="primary-button">
+                  Start Protecting Your Presence
+                </a>
+              </div>
+            </div>
+
+            {/* <div className="hero-image" aria-hidden="true">
             <div className="image-container">
               <img
                 src="--https://framerusercontent.com/images/cX3Ve1gMhvYi44m691mXK99jUs.png"
@@ -92,9 +138,9 @@ const Demo = () => {
               </div>
             </div>
           </div> */}
-        </section>
+          </section>
 
-        {/* <section className="features-section" id="features">
+          {/* <section className="features-section" id="features">
           <h2 className="section-title">Advanced Protection For Your Financial Assets</h2>
 
           <div className="features-grid">
@@ -116,7 +162,7 @@ const Demo = () => {
           </div>
         </section> */}
 
-        {/* <section className="solutions-section" id="solutions">
+          {/* <section className="solutions-section" id="solutions">
           <div className="solutions-content">
             <div className="solutions-info">
               <h2 className="solutions-title">Real-Time Monitoring</h2>
@@ -155,7 +201,7 @@ const Demo = () => {
           </div>
         </section> */}
 
-        {/* <section className="testimonials-section" id="testimonials">
+          {/* <section className="testimonials-section" id="testimonials">
           <div className="testimonial-header">
             <div className="tag-pill small">
               <span className="tag-indicator" />
@@ -188,9 +234,9 @@ const Demo = () => {
             />
           </div>
         </section> */}
-      </main>
+        </main>
 
-      {/* <footer className="footer" role="contentinfo">
+        {/* <footer className="footer" role="contentinfo">
         <div className="footer-content">
           <div className="footer-info">
             <div className="footer-logo">
