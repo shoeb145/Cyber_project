@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
-import './VideoSection.css';
-import Video from '../assets/video.mp4';
+import React, { useRef, useState } from "react";
+import "./VideoSection.css";
+import Video from "../../assets/video.mp4";
 
 const VideoSection = () => {
   const videoRef = useRef(null);
@@ -21,7 +21,11 @@ const VideoSection = () => {
   return (
     <section className="video-section" data-framer-name="Video Section">
       <div className="video-container" data-framer-name="Container">
-        <div className="video-label" data-border="true" data-framer-name="Label">
+        <div
+          className="video-label"
+          data-border="true"
+          data-framer-name="Label"
+        >
           <div className="video-label-icon">
             <img
               width="12"
@@ -31,7 +35,10 @@ const VideoSection = () => {
               className="video-label-img"
             />
           </div>
-          <div className="video-label-text" data-framer-component-type="RichTextContainer">
+          <div
+            className="video-label-text"
+            data-framer-component-type="RichTextContainer"
+          >
             <p className="video-label-title">
               Experience Real Protection in Real Time
             </p>
@@ -65,8 +72,22 @@ const VideoSection = () => {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <rect x="4" y="4" width="5" height="16" rx="2" fill="#D3ED05" />
-                  <rect x="15" y="4" width="5" height="16" rx="2" fill="#D3ED05" />
+                  <rect
+                    x="4"
+                    y="4"
+                    width="5"
+                    height="16"
+                    rx="2"
+                    fill="#D3ED05"
+                  />
+                  <rect
+                    x="15"
+                    y="4"
+                    width="5"
+                    height="16"
+                    rx="2"
+                    fill="#D3ED05"
+                  />
                 </svg>
               ) : (
                 <svg
@@ -77,7 +98,12 @@ const VideoSection = () => {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <polygon points="5,4 19,12 5,20" stroke="#D3ED05" strokeWidth="2.5" fill="none" />
+                  <polygon
+                    points="5,4 19,12 5,20"
+                    stroke="#D3ED05"
+                    strokeWidth="2.5"
+                    fill="none"
+                  />
                 </svg>
               )}
               <span className="video-overlay-text">

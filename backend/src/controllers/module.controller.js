@@ -47,3 +47,19 @@ export const createModule = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getModule = async (req, res, next) => {
+  try {
+    const CourseId = req.params[id];
+
+    if (!CourseId) {
+      return;
+    }
+    const course = await Courses.findById(CourseId);
+    if (!course) {
+      const error = new Error("there no course with this name");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
