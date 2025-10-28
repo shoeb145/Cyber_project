@@ -3,9 +3,10 @@ import Courses from "../models/Courses.js";
 
 export const createModule = async (req, res, next) => {
   try {
-    const { title, description, order, id } = req.body;
+    const { title, description, order, courseId } = req.body;
+    console.log(req.body);
     //  Validate inputs
-    if (!title || !description || order === undefined || !id) {
+    if (!title || !description || order === undefined || !courseId) {
       const error = new Error(
         "All fields (title, description, order) are required"
       );
@@ -25,10 +26,11 @@ export const createModule = async (req, res, next) => {
     const newModule = await Module.create({
       title: title.trim(),
       description: description.trim(),
+      courseId: courseId,
       order,
     });
 
-    const courses = await Courses.findById(id);
+    const courses = await Courses.findById(courseId);
     if (!courses) {
       const error = new Error("Courses is not exist");
       error.code = 404;
@@ -48,18 +50,53 @@ export const createModule = async (req, res, next) => {
   }
 };
 
-export const getModule = async (req, res, next) => {
+export const getModulesByCourse = async (req, res, next) => {
   try {
-    const CourseId = req.params[id];
+    const { id } = req.params; // Course ID
 
-    if (!CourseId) {
-      return;
+    if (!id) {
+      const error = new Error("Course ID is required");
+      error.code = 400;
+      throw error;
     }
-    const course = await Courses.findById(CourseId);
+
+    // Find course
+    const course = await Courses.findById(id).populate({
+      path: "modules",
+      options: { sort: { order: 1 } }, // Sort by order
+    });
+    console.log(course);
+
     if (!course) {
-      const error = new Error("there no course with this name");
+      const error = new Error("Course not found");
+      error.code = 404;
+      throw error;
     }
+
+    console.log(course);
+    res.status(200).json({
+      success: true,
+      course: {
+        _id: course._id,
+        title: course.title,
+        detail: course.detail,
+        type: course.type,
+        complexity: course.complexity,
+        hours: course.hours,
+      },
+      modules: course.modules,
+      totalModules: course.modules.length,
+    });
   } catch (error) {
     next(error);
   }
 };
+
+// export const createModule = async (req,res,next) =>{
+//   try {
+
+//   } catch (error) {
+//     next(error)
+
+//   }
+// }

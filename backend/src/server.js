@@ -6,8 +6,7 @@ import errorMiddleware from "./middleware/error.middleware.js";
 import authRouter from "./router/auth.router.js";
 import userRouter from "./router/user.router.js";
 import authorization from "./middleware/auth.middleware.js";
-import roleCheckMiddleware from "./middleware/role.middleware.js";
-import roleCheck from "./middleware/role.middleware.js";
+
 import coursesRoute from "./router/courses.router.js";
 import moduleRoute from "./router/module.router.js";
 import lessonRoute from "./router/lesson.router.js";
@@ -31,9 +30,9 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", authorization, userRouter);
-app.use("/api/courses", authorization, roleCheck(["user"]), coursesRoute);
-app.use("/api/module", authorization, roleCheck(["admin"]), moduleRoute);
-app.use("/api/lesson", authorization, roleCheck(["admin"]), lessonRoute);
+app.use("/api/courses", authorization, coursesRoute);
+app.use("/api/module", authorization, moduleRoute);
+app.use("/api/lesson", authorization, lessonRoute);
 
 app.use(errorMiddleware);
 

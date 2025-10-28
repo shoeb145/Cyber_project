@@ -22,13 +22,29 @@ function AdminDashboard({ user }) {
     fetchData();
   }, []);
 
+  const handleDelete = async (courseId, title) => {
+    const confirm = window.confirm(
+      `if you want to delete Course title: ${title} press OK`
+    );
+    if (!confirm) return;
+
+    try {
+      await axios.delete(`http://localhost:5001/api/courses/${courseId}`, {
+        withCredentials: true,
+      });
+      setData(data.filter((course) => course._id !== courseId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="bg-[#0b121f] min-h-screen">
       <NavBar user={user} />
 
       {/* Course List */}
       <div className="pt-20">
-        <CourseList data={data} />
+        <CourseList data={data} handleDelete={handleDelete} />
       </div>
 
       {/* Modal */}

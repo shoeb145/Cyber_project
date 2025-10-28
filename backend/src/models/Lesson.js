@@ -26,10 +26,8 @@ const LessonSchema = new mongoose.Schema(
       type: Number, // minutes
       default: 5,
     },
-    order: {
-      type: Number,
-      default: 1,
-    },
+
+    moduleId: { type: mongoose.Schema.Types.ObjectId, ref: "Module" },
   },
   { timestamps: true }
 );

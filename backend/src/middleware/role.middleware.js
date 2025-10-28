@@ -1,12 +1,15 @@
 import User from "../models/User.js";
 
-const roleCheck = (allowedRoles) => (req, res, next) => {
-  if (!req.user || !allowedRoles.includes(req.user.role)) {
-    const error = new Error("Forbidden");
-    error.code = 403;
-    return next(error);
-  }
-  next();
-};
+export const roleCheck = (allowedRoles = []) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized: No user found" });
+    }
 
-export default roleCheck;
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden: Access denied" });
+    }
+
+    next();
+  };
+};

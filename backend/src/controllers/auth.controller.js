@@ -111,30 +111,28 @@ export const signIn = async (req, res, next) => {
     next(error);
   }
 };
-
-export const verifyUser = async (req, res) => {
+export const verifyUser = async (req, res, next) => {
   try {
-    console.log("hello");
-    const token = req.cookies.token; // Get token from cookie
+    const token = req.cookies.token; // 🍪 JWT from cookie
     if (!token) {
       return res
         .status(401)
         .json({ success: false, message: "No token found" });
     }
-    console.log(token, "hellllo");
-    // Verify JWT
+
+    // 🔐 Verify JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded.userId, "hello");
-    // Optional: check if user exists
-    const user = await User.findById(decoded.userId);
+
+    // 👤 Find user
+    const user = await User.findById(decoded.userId).select("name role email");
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
-    // ✅ Token valid
-    res.status(200).json({
+    // ✅ Authenticated
+    return res.status(200).json({
       success: true,
       message: "Authenticated",
       user: {
@@ -145,9 +143,18 @@ export const verifyUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Token verification failed:", error.message);
-    res
+
+    return res
       .status(401)
       .json({ success: false, message: "Invalid or expired token" });
-    next(error);
   }
+};
+
+export const signOut = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
 };

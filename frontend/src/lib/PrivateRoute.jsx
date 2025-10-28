@@ -2,33 +2,45 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
-const PrivateRoute = ({ children }) => {
-  const [auth, setAuth] = useState(null);
+const PrivateRoute = ({ children, allowedRoles = [] }) => {
+  const [auth, setAuth] = useState({
+    loading: true,
+    success: false,
+    role: null,
+  });
 
   useEffect(() => {
     const verifyUser = async () => {
       try {
         const res = await axios.get("http://localhost:5001/api/auth/verify", {
-          withCredentials: true, // 🚀 sends cookies
+          withCredentials: true, // send cookies if using cookie-based auth
         });
-        console.log(res.data.success, "this is route");
 
         if (res.data.success) {
-          setAuth(true);
+          setAuth({ loading: false, success: true, role: res.data.user.role });
         } else {
-          setAuth(false);
+          setAuth({ loading: false, success: false, role: null });
         }
       } catch (error) {
-        setAuth(false);
+        setAuth({ loading: false, success: false, role: null });
       }
     };
 
     verifyUser();
   }, []);
 
-  if (auth === null) return <div>Checking authentication...</div>;
+  if (auth.loading) return <div>Checking authentication...</div>;
 
-  return auth ? children : <Navigate to="/login" />;
+  // 🚫 Not logged in → redirect
+  if (!auth.success) return <Navigate to="/login" />;
+
+  // 🚫 Logged in but not authorized for this route
+  if (allowedRoles.length > 0 && !allowedRoles.includes(auth.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // ✅ Logged in and authorized
+  return children;
 };
 
 export default PrivateRoute;

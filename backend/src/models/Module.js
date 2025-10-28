@@ -15,7 +15,8 @@ const ModuleSchema = mongoose.Schema({
   },
   isLocked: { type: Boolean, default: true },
   unlockCondition: { type: String, default: "Complete previous module" },
-  lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Lesson" }],
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Courses" },
+  lessons: { type: mongoose.Schema.Types.ObjectId, ref: "Lesson" },
 });
 
 export default mongoose.model("Module", ModuleSchema);

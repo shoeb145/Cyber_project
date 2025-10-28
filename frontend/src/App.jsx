@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./home_page.css";
-import Hero from "./components/Hero";
-import Home_page from "./components/Home_page";
-import BenefitsSection from "./components/BenefitsSection/BenefitsSection";
-import CounterSection from "./components/CounterSection/CounterSection";
-import VideoSection from "./components/VideoSection/VideoSection";
-import CaseStudiesSection from "./components/CaseStudiesSection/CaseStudiesSection";
-import ReviewSection from "./components/ReviewSection/ReviewSection";
+
 import Dashboard from "./components/Dashboard";
 import Modules from "./components/Modules";
 import Paths from "./components/Paths";
@@ -22,6 +16,8 @@ import PrivateRoute from "./lib/PrivateRoute";
 import AdminDashboard from "./pages/AdminPages/AdminDashboard";
 import axios from "axios";
 import HomePage from "./pages/HomePage";
+import ModulePage from "./pages/AdminPages/ModulePage";
+import LessonPage from "./pages/AdminPages/LessonsPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -43,24 +39,56 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route
+            path="/unauthorized"
+            element={
+              <div className="flex justify-center items-center h-dvh bg-[#0b121f]">
+                <h2 className="text-white text-4xl font-medium">
+                  Access Denied
+                </h2>
+              </div>
+            }
+          />
 
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["user", "admin"]}>
                 <Dashboard />
               </PrivateRoute>
             }
           />
+
           <Route
             path="/admin/courses"
-            element={<AdminDashboard user={user} />}
+            element={
+              <PrivateRoute allowedRoles={["admin"]}>
+                <AdminDashboard user={user} />
+              </PrivateRoute>
+            }
           />
+          <Route
+            path="/courses/:id/modules"
+            element={
+              <PrivateRoute allowedRoles={["admin"]}>
+                <ModulePage user={user} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/courses/:id/modules/:moduleId/lessons"
+            element={
+              <PrivateRoute allowedRoles={["admin"]}>
+                <LessonPage user={user} />{" "}
+              </PrivateRoute>
+            }
+          />
+
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/modules"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["user", "admin"]}>
                 <Modules />
               </PrivateRoute>
             }
@@ -68,7 +96,7 @@ function App() {
           <Route
             path="/paths"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["user", "admin"]}>
                 <Paths />
               </PrivateRoute>
             }
@@ -76,7 +104,7 @@ function App() {
           <Route
             path="/certificates"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["user", "admin"]}>
                 <Certificates />
               </PrivateRoute>
             }
