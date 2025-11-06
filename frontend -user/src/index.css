@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* custom global */
+:root {
+  --primary: #ff0000;
+  --light-bg: #ffffff;
+  --light-text: #000000;
+  --light-surface: #f8fafc;
+  --dark-bg: #000b06;
+  --dark-surface: #00542a;
+  --dark-highlight: #00ff9d;
+}
+
+/* dark mode variables */
+.dark {
+  --bg: var(--dark-bg);
+  --surface: var(--dark-surface);
+  --text: #ffffff;
+  --highlight: var(--dark-highlight);
+}
+
+.light {
+  --bg: var(--light-bg);
+  --surface: var(--light-surface);
+  --text: var(--light-text);
+  --highlight: var(--primary);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
