@@ -18,6 +18,9 @@ import axios from "axios";
 import HomePage from "./pages/HomePage";
 import ModulePage from "./pages/AdminPages/ModulePage";
 import LessonPage from "./pages/AdminPages/LessonsPage";
+import UserModulePage from "./pages/UserModulePage";
+import UserLessonsPage from "./pages/UserLessonsPage";
+import Unauthorized from "./pages/AdminPages/Unauthorized";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -35,20 +38,28 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
+      <div className="App ">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignupPage />} />
+
           <Route
-            path="/unauthorized"
+            path="/courses/:id/modules"
             element={
-              <div className="flex justify-center items-center h-dvh bg-[#0b121f]">
-                <h2 className="text-white text-4xl font-medium">
-                  Access Denied
-                </h2>
-              </div>
+              <PrivateRoute allowedRoles={["user", "admin"]}>
+                <UserModulePage user={user} />
+              </PrivateRoute>
             }
           />
+          <Route
+            path="/courses/:id/modules/:moduleId/learn"
+            element={
+              <PrivateRoute allowedRoles={["user", "admin"]}>
+                <UserLessonsPage user={user} />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
           <Route
             path="/dashboard"
@@ -68,7 +79,7 @@ function App() {
             }
           />
           <Route
-            path="/courses/:id/modules"
+            path="/admin/courses/:id/modules"
             element={
               <PrivateRoute allowedRoles={["admin"]}>
                 <ModulePage user={user} />
@@ -76,7 +87,7 @@ function App() {
             }
           />
           <Route
-            path="/courses/:id/modules/:moduleId/lessons"
+            path="/admin/courses/:id/modules/:moduleId/lessons"
             element={
               <PrivateRoute allowedRoles={["admin"]}>
                 <LessonPage user={user} />{" "}

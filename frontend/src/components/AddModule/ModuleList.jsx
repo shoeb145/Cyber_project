@@ -305,7 +305,7 @@ function ModuleList({ modules, courseId }) {
                         <button
                           onClick={() =>
                             navigate(
-                              `/courses/${courseId}/modules/${module._id}/lessons`
+                              `/admin/courses/${courseId}/modules/${module._id}/lessons`
                             )
                           }
                           className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all shadow-lg shadow-blue-600/20"
@@ -377,7 +377,7 @@ function ModuleList({ modules, courseId }) {
                       <button
                         onClick={() =>
                           navigate(
-                            `/courses/${courseId}/modules/${module._id}/lessons`
+                            `/admin/courses/${courseId}/modules/${module._id}/lessons`
                           )
                         }
                         className="flex items-center gap-2 px-3 py-1.5 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 text-sm font-medium rounded-lg transition-all border border-blue-500/20"

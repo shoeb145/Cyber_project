@@ -9,193 +9,295 @@ function CourseList({ data, handleDelete }) {
 
   const [selectedCourse, setSelectedCourse] = useState(null);
 
+  const getCategoryGradient = (type) => {
+    switch (type) {
+      case "General":
+        return "from-green-500 to-emerald-500";
+      case "Defensive":
+        return "from-blue-500 to-cyan-500";
+      case "Offensive":
+        return "from-red-500 to-orange-500";
+      default:
+        return "from-gray-500 to-gray-600";
+    }
+  };
+
+  const getComplexityColor = (complexity) => {
+    switch (complexity) {
+      case "Fundamental":
+        return "bg-green-500/20 text-green-400 border-green-500/30";
+      case "Medium":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+      case "Hard":
+        return "bg-red-500/20 text-red-400 border-red-500/30";
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+    }
+  };
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-24 h-24 mb-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-gray-500"
+            >
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">
+            No courses available yet
+          </h3>
+          <p className="text-gray-400 text-sm">
+            Click the + button to add your first course
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center px-4  pb-24 ">
-      {data && data.length > 0 ? (
-        data.map((course, id) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pb-24">
+      {data.map((course) => (
+        <div
+          key={course._id}
+          className="group relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-2xl border border-gray-800/50 overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-[1.02] cursor-pointer"
+        >
+          {/* Glow effect on hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300 pointer-events-none"></div>
+
+          {/* Action buttons - Top right */}
+          <div className="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedCourse(course);
+                setIsModalOpen(true);
+              }}
+              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-lg border border-white/20 transition-all hover:scale-110"
+              title="Edit Course"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-white"
+              >
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(course._id, course.title);
+              }}
+              className="p-2 bg-red-500/20 hover:bg-red-500/30 backdrop-blur-md rounded-lg border border-red-500/30 transition-all hover:scale-110"
+              title="Delete Course"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-red-400"
+              >
+                <path d="M3 6h18" />
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Course Image */}
           <div
-            className="card bg-[#141d2b] w-full max-w-md shadow-lg mb-4 pt-4! rounded-2xl overflow-hidden  hover:shadow-2xl transition-shadow"
-            key={id}
-            onClick={() => navigate(`/courses/${course._id}/modules`)}
+            className="relative h-48 overflow-hidden"
+            onClick={() => navigate(`/admin/courses/${course._id}/modules`)}
           >
-            <div className="h-12 flex w-full gap-6  justify-between mb-1">
-              <svg
-                data-slot="icon"
-                fill="none"
-                className="size-7 text-white cursor-pointer"
-                stroke-width="1.5"
-                stroke="currentColor"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedCourse(course);
-                  setIsModalOpen(true);
-                }}
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
+            <img
+              src={course.image}
+              alt={course.title || "course image"}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#141d2b] via-transparent to-transparent"></div>
+
+            {/* Category and Complexity badges */}
+            <div className="absolute top-3 left-3 right-16 flex gap-2">
+              <div
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${getCategoryGradient(
+                  course.type
+                )} shadow-lg`}
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                ></path>
-              </svg>
-              <svg
-                data-slot="icon"
-                fill="none"
-                stroke-width="1.5"
-                className="size-7 text-rose-300 cursor-pointer "
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(course._id, course.title);
-                }}
+                {course.type}
+              </div>
+              <div
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${getComplexityColor(
+                  course.complexity
+                )} backdrop-blur-sm`}
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                ></path>
-              </svg>
+                {course.complexity}
+              </div>
             </div>
 
-            <figure className="relative">
-              <img
-                src={course.image}
-                alt={course.title || "course image"}
-                className="w-full h-48 object-cover"
-              />
-
-              {/* Category badges */}
-              <div className="absolute top-3 left-3 right-3 flex gap-2 justify-between">
-                <div className="rounded-full text-xs px-3 py-1 backdrop-blur-md bg-black/30 border border-white/20">
-                  <span className="text-white font-medium">{course.type}</span>
-                </div>
-                <div className="rounded-full text-xs px-3 py-1 backdrop-blur-md bg-black/30 border border-white/20">
-                  <span className="text-white font-medium">
-                    {course.complexity}
-                  </span>
-                </div>
+            {/* Hours badge */}
+            <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg border border-white/20">
+              <div className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                {course.hours}h
               </div>
-
-              {/* Hours badge */}
-              <div className="absolute bottom-3 right-3 rounded-lg text-xs px-3 py-1.5 backdrop-blur-md bg-blue-600/80 border border-blue-400/30">
-                <span className="text-white font-semibold">
-                  {course.hours} Hours
-                </span>
-              </div>
-            </figure>
-
-            <div className="card-body p-6">
-              <h2 className="card-title text-white text-xl font-semibold">
-                {course.title}
-              </h2>
-
-              <p className="text-gray-400 text-sm leading-relaxed mt-2 line-clamp-3">
-                {course.detail}
-              </p>
-
-              {/* Tags */}
-              {course.tag && course.tag.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {course.tag.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="text-xs px-2.5 py-1 bg-gray-700/50 text-gray-300 rounded-md border border-gray-600/50"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Course Stats */}
-              <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-700/50">
-                <div className="flex items-center gap-1.5 text-gray-400 text-xs">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span>{course.hours}h</span>
-                </div>
-
-                <div className="flex items-center gap-1.5 text-gray-400 text-xs">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                  </svg>
-                  <span>{course.modules?.length || 0} Modules</span>
-                </div>
-
-                <div className="flex items-center gap-1.5 text-gray-400 text-xs">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                  <span>{course.complexity}</span>
-                </div>
-              </div>
-
-              {/* Action Button */}
             </div>
           </div>
-        ))
-      ) : (
-        <div className="text-gray-400 text-center py-12">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="64"
-            height="64"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mx-auto mb-4 text-gray-600"
+
+          {/* Course Content */}
+          <div
+            className="relative p-6"
+            onClick={() => navigate(`/admin/courses/${course._id}/modules`)}
           >
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
-          <p className="text-lg font-medium">No courses available yet.</p>
-          <p className="text-sm mt-2">Click the + button to add a course.</p>
+            <h2 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">
+              {course.title}
+            </h2>
+
+            <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">
+              {course.detail}
+            </p>
+
+            {/* Tags */}
+            {course.tag && course.tag.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {course.tag.slice(0, 3).map((tag, index) => (
+                  <span
+                    key={index}
+                    className="text-xs px-2.5 py-1 bg-gray-700/50 text-gray-300 rounded-md border border-gray-600/50 hover:bg-gray-700 transition-colors"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+                {course.tag.length > 3 && (
+                  <span className="text-xs px-2.5 py-1 bg-gray-700/50 text-gray-400 rounded-md border border-gray-600/50">
+                    +{course.tag.length - 3} more
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Course Stats */}
+            <div className="flex items-center gap-4 pt-4 border-t border-gray-700/50">
+              <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span className="font-medium">{course.hours}h</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+                <span className="font-medium">
+                  {course.modules?.length || 0} Modules
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                <span className="font-medium">{course.complexity}</span>
+              </div>
+            </div>
+
+            {/* View Details Button */}
+            <button className="w-full mt-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-600/20 group-hover:shadow-blue-600/40 flex items-center justify-center gap-2">
+              <span>View Modules</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="group-hover:translate-x-1 transition-transform"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
-      )}
+      ))}
+
       {/* ✅ Modal rendered only once */}
       {isModalOpen && selectedCourse && (
         <EditCourse

@@ -1,615 +1,490 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Modules.css";
-import ModernModuleCard from "./ModernModuleCard";
-import Layout from "./Layout";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
-import {
-  Search,
-  Filter,
-  Grid,
-  List,
-  BookOpen,
-  TrendingUp,
-  Award,
-  Clock,
-} from "lucide-react";
 
-// Sample module data - would come from API in production
-const moduleData = [
-  {
-    id: 1,
-    title: "Introduction to Cybersecurity",
-    description:
-      "Learn the basics of cybersecurity, including key concepts and terminology.",
-    difficulty: "Fundamental",
-    category: "General",
-    progress: 0,
-    image: "/module-images/intro.jpg",
-    estimatedTime: "3 hours",
-    tags: ["beginner", "theory"],
-  },
-  {
-    id: 2,
-    title: "Network Security Fundamentals",
-    description:
-      "Understanding network protocols, architecture and security principles.",
-    difficulty: "Easy",
-    category: "Defensive",
-    progress: 30,
-    image: "/module-images/network.jpg",
-    estimatedTime: "5 hours",
-    tags: ["networking", "protocols", "defensive"],
-  },
-  {
-    id: 3,
-    title: "Web Application Pentesting",
-    description:
-      "Learn methodologies for finding and exploiting web application vulnerabilities.",
-    difficulty: "Medium",
-    category: "Offensive",
-    progress: 0,
-    image: "/module-images/webapp.jpg",
-    estimatedTime: "8 hours",
-    tags: ["pentesting", "web", "offensive"],
-  },
-  {
-    id: 4,
-    title: "Advanced Exploitation Techniques",
-    description:
-      "Advanced methods for exploiting complex vulnerabilities in systems.",
-    difficulty: "Hard",
-    category: "Offensive",
-    progress: 0,
-    image: "/module-images/exploit.jpg",
-    estimatedTime: "10 hours",
-    tags: ["exploitation", "advanced", "offensive"],
-  },
-  {
-    id: 5,
-    title: "Digital Forensics",
-    description:
-      "Methodologies and tools used to investigate cybersecurity incidents.",
-    difficulty: "Medium",
-    category: "Defensive",
-    progress: 15,
-    image: "/module-images/forensics.jpg",
-    estimatedTime: "7 hours",
-    tags: ["forensics", "analysis", "defensive"],
-  },
-  {
-    id: 6,
-    title: "Malware Analysis",
-    description:
-      "Techniques for analyzing malicious software and understanding its behavior.",
-    difficulty: "Hard",
-    category: "Defensive",
-    progress: 0,
-    image: "/module-images/malware.jpg",
-    estimatedTime: "9 hours",
-    tags: ["malware", "analysis", "defensive"],
-  },
-  {
-    id: 7,
-    title: "Cloud Security",
-    description:
-      "Security principles and practices specific to cloud environments.",
-    difficulty: "Medium",
-    category: "General",
-    progress: 0,
-    image: "/module-images/cloud.jpg",
-    estimatedTime: "6 hours",
-    tags: ["cloud", "aws", "azure"],
-  },
-  {
-    id: 8,
-    title: "Mobile Application Security",
-    description:
-      "Understanding vulnerabilities specific to mobile applications.",
-    difficulty: "Medium",
-    category: "Offensive",
-    progress: 0,
-    image: "/module-images/mobile.jpg",
-    estimatedTime: "6 hours",
-    tags: ["mobile", "android", "ios"],
-  },
-];
-
-const Modules = () => {
-  // State for filters
+function Modules({ user }) {
+  const navigate = useNavigate();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
-  const [progressFilter, setProgressFilter] = useState("All");
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
 
-  const [data, setData] = useState(null);
+  const categories = ["All", "General", "Defensive", "Offensive"];
+  const difficulties = ["All", "Fundamental", "Medium", "Hard"];
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await axios.get("http://localhost:5001/api/courses", {
-          withCredentials: true,
-        });
-        console.log(data.data.course);
-        setData(data.data.course);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
+    fetchCourses();
   }, []);
-  // Filter modules based on user selections
-  const filteredModules = moduleData.filter((module) => {
-    // Search term filtering
-    const matchesSearchTerm =
-      module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      module.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      module.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
-      );
 
-    // Category filtering
+  const fetchCourses = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://localhost:5001/api/courses", {
+        withCredentials: true,
+      });
+      setCourses(response.data.course || []);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter courses
+  const filteredCourses = courses.filter((course) => {
     const matchesCategory =
-      categoryFilter === "All" || module.category === categoryFilter;
-
-    // Difficulty filtering
+      selectedCategory === "All" || course.type === selectedCategory;
     const matchesDifficulty =
-      difficultyFilter === "All" || module.difficulty === difficultyFilter;
-
-    // Progress filtering
-    const matchesProgress =
-      progressFilter === "All" ||
-      (progressFilter === "Completed" && module.progress === 100) ||
-      (progressFilter === "In Progress" &&
-        module.progress > 0 &&
-        module.progress < 100) ||
-      (progressFilter === "Not Started" && module.progress === 0);
-
-    return (
-      matchesSearchTerm &&
-      matchesCategory &&
-      matchesDifficulty &&
-      matchesProgress
-    );
+      difficultyFilter === "All" || course.complexity === difficultyFilter;
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.detail.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesDifficulty && matchesSearch;
   });
 
   // Calculate stats
-  const totalModules = moduleData.length;
-  const completedModules = moduleData.filter((m) => m.progress === 100).length;
-  const inProgressModules = moduleData.filter(
-    (m) => m.progress > 0 && m.progress < 100
-  ).length;
-  const avgProgress = Math.round(
-    moduleData.reduce((sum, m) => sum + m.progress, 0) / totalModules
-  );
+  const totalCourses = courses.length;
+  const completedCourses = 0; // TODO: Get from user progress
+  const inProgressCourses = 0; // TODO: Get from user progress
+  const avgProgress = 0; // TODO: Calculate from user progress
 
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+  const getCategoryColor = (type) => {
+    switch (type) {
+      case "General":
+        return "from-green-500 to-emerald-500";
+      case "Defensive":
+        return "from-blue-500 to-cyan-500";
+      case "Offensive":
+        return "from-red-500 to-orange-500";
+      default:
+        return "from-gray-500 to-gray-600";
+    }
   };
 
-  // Toggle filters visibility
-  const toggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
-
-  // Clear all filters
-  const clearFilters = () => {
-    setSearchTerm("");
-    setCategoryFilter("All");
-    setDifficultyFilter("All");
-    setProgressFilter("All");
+  const getComplexityColor = (complexity) => {
+    switch (complexity) {
+      case "Fundamental":
+        return "text-green-400 bg-green-500/10 border-green-500/30";
+      case "Medium":
+        return "text-yellow-400 bg-yellow-500/10 border-yellow-500/30";
+      case "Hard":
+        return "text-red-400 bg-red-500/10 border-red-500/30";
+      default:
+        return "text-gray-400 bg-gray-500/10 border-gray-500/30";
+    }
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          {/* Hero Header */}
-          <div className="mb-8 sm:mb-12">
-            <div className="mb-6 sm:mb-8 text-center">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-                Learning Modules
+    <div className="min-h-screen bg-gradient-to-br from-[#0b121f] via-[#141d2b] to-[#0b121f]">
+      {/* Animated background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 border-b border-gray-800/50 bg-[#0b121f]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                My Learning
               </h1>
-              <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-                Master cybersecurity through hands-on modules and interactive
-                content
+              <p className="text-gray-400">
+                Master cybersecurity through hands-on courses
               </p>
             </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center space-x-3 sm:space-x-4 justify-center text-center sm:justify-start sm:text-left">
-                    <div className="bg-blue-500 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                      <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-blue-700">
-                        Total Modules
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-blue-900">
-                        {totalModules}
-                      </p>
-                    </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-[#141d2b] to-[#0b121f] rounded-lg border border-gray-800/50">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white">
+                  {user?.name?.charAt(0) || "S"}
+                </div>
+                <div>
+                  <div className="text-white text-sm font-semibold">
+                    {user?.name || "Student"}
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center space-x-3 sm:space-x-4 justify-center text-center sm:justify-start sm:text-left">
-                    <div className="bg-green-500 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                      <Award className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-green-700">
-                        Completed
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-green-900">
-                        {completedModules}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center space-x-3 sm:space-x-4 justify-center text-center sm:justify-start sm:text-left">
-                    <div className="bg-yellow-500 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                      <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-yellow-700">
-                        In Progress
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-yellow-900">
-                        {inProgressModules}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center space-x-3 sm:space-x-4 justify-center text-center sm:justify-start sm:text-left">
-                    <div className="bg-purple-500 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                      <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-purple-700">
-                        Avg Progress
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-900">
-                        {avgProgress}%
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  <div className="text-gray-400 text-xs">Learner</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Search and Filter Section */}
-          <Card className="mb-6 sm:mb-8 shadow-md">
-            <CardHeader className="pb-4">
-              <div className="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:items-center lg:space-y-0">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg sm:text-xl text-gray-900 text-left">
-                    Find Your Perfect Module
-                  </CardTitle>
-                  <CardDescription className="text-sm sm:text-base text-gray-600 text-left">
-                    Search and filter to discover modules that match your
-                    learning goals
-                  </CardDescription>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Total Courses */}
+            <div className="relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-xl border border-gray-800/50 p-4 overflow-hidden group hover:border-blue-500/50 transition-all">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/10 group-hover:to-blue-500/5 transition-all"></div>
+              <div className="relative flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center border border-blue-500/30">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-blue-400"
+                  >
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                  </svg>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className="flex items-center gap-2 px-4 py-2 font-semibold text-sm shadow-sm transition-all hover:shadow-md"
-                  >
-                    <Grid className="w-4 h-4" />
-                    <span className="hidden sm:inline tracking-wide">
-                      Grid View
-                    </span>
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="flex items-center gap-2 px-4 py-2 font-semibold text-sm shadow-sm transition-all hover:shadow-md"
-                  >
-                    <List className="w-4 h-4" />
-                    <span className="hidden sm:inline tracking-wide">
-                      List View
-                    </span>
-                  </Button>
+                <div>
+                  <p className="text-gray-400 text-xs font-medium">
+                    Total Courses
+                  </p>
+                  <p className="text-white text-2xl font-bold">
+                    {totalCourses}
+                  </p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                  <Input
-                    placeholder="Search modules, descriptions, or tags..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="pl-10 h-11 text-gray-900 placeholder:text-gray-500 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  />
+            </div>
+
+            {/* Completed */}
+            <div className="relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-xl border border-gray-800/50 p-4 overflow-hidden group hover:border-green-500/50 transition-all">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 to-green-500/0 group-hover:from-green-500/10 group-hover:to-green-500/5 transition-all"></div>
+              <div className="relative flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center border border-green-500/30">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-green-400"
+                  >
+                    <path d="M12 2a10 10 0 0 1 7.38 16.75" />
+                    <path d="M12 8v8" />
+                    <path d="m16 12-4 4-4-4" />
+                    <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
+                    <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
+                    <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
+                  </svg>
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={toggleFilters}
-                  className="h-12 px-6 bg-white border-2 border-gray-300 text-gray-800 font-semibold text-sm hover:bg-gray-50 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all"
-                >
-                  <Filter className="w-5 h-5 mr-3" />
-                  <span className="whitespace-nowrap tracking-wide">
-                    {showFilters ? "Hide Filters" : "Show Filters"}
-                  </span>
-                </Button>
+                <div>
+                  <p className="text-gray-400 text-xs font-medium">Completed</p>
+                  <p className="text-white text-2xl font-bold">
+                    {completedCourses}
+                  </p>
+                </div>
               </div>
+            </div>
 
-              {/* Advanced Filters */}
-              {showFilters && (
-                <div className="border-t border-gray-200 pt-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                      Advanced Filters
-                    </h3>
-                    <Button
-                      variant="ghost"
-                      onClick={clearFilters}
-                      className="px-4 py-2 text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 rounded-lg transition-all hover:shadow-sm"
-                    >
-                      Clear All Filters
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-gray-800 block tracking-wide">
-                        Category
-                      </label>
-                      <Select
-                        value={categoryFilter}
-                        onValueChange={setCategoryFilter}
-                      >
-                        <SelectTrigger className="w-full h-12 bg-white text-gray-900 font-bold border-2 border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg shadow-sm transition-all">
-                          <SelectValue
-                            placeholder="Select category"
-                            className="text-gray-900 font-bold"
-                          />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border-2 border-gray-200 shadow-lg rounded-lg p-1">
-                          {["All", "Offensive", "Defensive", "General"].map(
-                            (category) => (
-                              <SelectItem
-                                key={category}
-                                value={category}
-                                className="text-gray-900 font-semibold hover:bg-blue-100 hover:text-blue-900 px-4 py-3 cursor-pointer rounded-md transition-colors data-[highlighted]:bg-blue-100 data-[highlighted]:text-blue-900"
-                              >
-                                {category}
-                              </SelectItem>
-                            )
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-gray-800 block tracking-wide">
-                        Difficulty
-                      </label>
-                      <Select
-                        value={difficultyFilter}
-                        onValueChange={setDifficultyFilter}
-                      >
-                        <SelectTrigger className="w-full h-12 bg-white text-gray-900 font-bold border-2 border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg shadow-sm transition-all">
-                          <SelectValue
-                            placeholder="Select difficulty"
-                            className="text-gray-900 font-bold"
-                          />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border-2 border-gray-200 shadow-lg rounded-lg p-1">
-                          {["All", "Fundamental", "Easy", "Medium", "Hard"].map(
-                            (difficulty) => (
-                              <SelectItem
-                                key={difficulty}
-                                value={difficulty}
-                                className="text-gray-900 font-semibold hover:bg-green-100 hover:text-green-900 px-4 py-3 cursor-pointer rounded-md transition-colors data-[highlighted]:bg-green-100 data-[highlighted]:text-green-900"
-                              >
-                                {difficulty}
-                              </SelectItem>
-                            )
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-gray-800 block tracking-wide">
-                        Progress
-                      </label>
-                      <Select
-                        value={progressFilter}
-                        onValueChange={setProgressFilter}
-                      >
-                        <SelectTrigger className="w-full h-12 bg-white text-gray-900 font-bold border-2 border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg shadow-sm transition-all">
-                          <SelectValue
-                            placeholder="Select progress"
-                            className="text-gray-900 font-bold"
-                          />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border-2 border-gray-200 shadow-lg rounded-lg p-1">
-                          {[
-                            "All",
-                            "Not Started",
-                            "In Progress",
-                            "Completed",
-                          ].map((progress) => (
-                            <SelectItem
-                              key={progress}
-                              value={progress}
-                              className="text-gray-900 font-semibold hover:bg-purple-100 hover:text-purple-900 px-4 py-3 cursor-pointer rounded-md transition-colors data-[highlighted]:bg-purple-100 data-[highlighted]:text-purple-900"
-                            >
-                              {progress}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Active Filters */}
-                  {(categoryFilter !== "All" ||
-                    difficultyFilter !== "All" ||
-                    progressFilter !== "All") && (
-                    <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
-                      <span className="text-sm font-medium text-gray-700">
-                        Active filters:
-                      </span>
-                      {categoryFilter !== "All" && (
-                        <Badge
-                          variant="secondary"
-                          className="flex items-center gap-2 bg-blue-50 text-blue-900 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 font-medium shadow-sm"
-                        >
-                          <span className="font-semibold">Category:</span>{" "}
-                          {categoryFilter}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-5 w-5 p-0 ml-1 hover:bg-blue-200 rounded-full text-blue-700 hover:text-blue-900 font-bold transition-all"
-                            onClick={() => setCategoryFilter("All")}
-                          >
-                            <span className="text-lg leading-none">×</span>
-                          </Button>
-                        </Badge>
-                      )}
-                      {difficultyFilter !== "All" && (
-                        <Badge
-                          variant="secondary"
-                          className="flex items-center gap-2 bg-green-50 text-green-900 hover:bg-green-100 border border-green-200 px-3 py-1.5 font-medium shadow-sm"
-                        >
-                          <span className="font-semibold">Difficulty:</span>{" "}
-                          {difficultyFilter}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-5 w-5 p-0 ml-1 hover:bg-green-200 rounded-full text-green-700 hover:text-green-900 font-bold transition-all"
-                            onClick={() => setDifficultyFilter("All")}
-                          >
-                            <span className="text-lg leading-none">×</span>
-                          </Button>
-                        </Badge>
-                      )}
-                      {progressFilter !== "All" && (
-                        <Badge
-                          variant="secondary"
-                          className="flex items-center gap-2 bg-purple-50 text-purple-900 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 font-medium shadow-sm"
-                        >
-                          <span className="font-semibold">Progress:</span>{" "}
-                          {progressFilter}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-5 w-5 p-0 ml-1 hover:bg-purple-200 rounded-full text-purple-700 hover:text-purple-900 font-bold transition-all"
-                            onClick={() => setProgressFilter("All")}
-                          >
-                            <span className="text-lg leading-none">×</span>
-                          </Button>
-                        </Badge>
-                      )}
-                    </div>
-                  )}
+            {/* In Progress */}
+            <div className="relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-xl border border-gray-800/50 p-4 overflow-hidden group hover:border-yellow-500/50 transition-all">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/0 to-yellow-500/0 group-hover:from-yellow-500/10 group-hover:to-yellow-500/5 transition-all"></div>
+              <div className="relative flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 flex items-center justify-center border border-yellow-500/30">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-yellow-400"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                <div>
+                  <p className="text-gray-400 text-xs font-medium">
+                    In Progress
+                  </p>
+                  <p className="text-white text-2xl font-bold">
+                    {inProgressCourses}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-          {/* Results Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                {filteredModules.length}{" "}
-                {filteredModules.length === 1 ? "Module" : "Modules"} Found
-              </h2>
-              {filteredModules.length !== totalModules && (
-                <Badge
-                  variant="outline"
-                  className="text-gray-600 border-gray-300 w-fit"
-                >
-                  {totalModules - filteredModules.length} filtered out
-                </Badge>
-              )}
+            {/* Avg Progress */}
+            <div className="relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-xl border border-gray-800/50 p-4 overflow-hidden group hover:border-purple-500/50 transition-all">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/10 group-hover:to-purple-500/5 transition-all"></div>
+              <div className="relative flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center border border-purple-500/30">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-purple-400"
+                  >
+                    <path d="M3 3v18h18" />
+                    <path d="m19 9-5 5-4-4-3 3" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-gray-400 text-xs font-medium">
+                    Avg Progress
+                  </p>
+                  <p className="text-white text-2xl font-bold">
+                    {avgProgress}%
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Modules Grid */}
-          {filteredModules.length > 0 ? (
-            <div
-              className={`grid gap-4 sm:gap-6 ${
-                viewMode === "grid"
-                  ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
-                  : "grid-cols-1"
-              }`}
-            >
-              <ModernModuleCard module={data} viewMode={viewMode} />
-            </div>
-          ) : (
-            <Card className="text-center py-12 sm:py-16 shadow-md">
-              <CardContent>
-                <div className="flex flex-col items-center space-y-4 max-w-md mx-auto text-center">
-                  <div className="bg-gray-100 rounded-full p-6">
-                    <BookOpen className="w-12 h-12 text-gray-400 mx-auto" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      No modules match your criteria
-                    </h3>
-                    <p className="text-gray-600 text-sm sm:text-base">
-                      Try adjusting your filters or search terms to find
-                      relevant content.
-                    </p>
-                    <Button
-                      onClick={clearFilters}
-                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      Reset All Filters
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
-    </Layout>
+
+      {/* Main Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search and Filter Bar */}
+        <div className="bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-2xl border border-gray-800/50 p-6 mb-8">
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-gray-500"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Search courses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-[#0b121f] text-white border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-500"
+              />
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2 text-gray-400 text-sm font-medium">
+                Category:
+              </div>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+                    selectedCategory === category
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-600/20"
+                      : "bg-[#0b121f] text-gray-400 hover:text-white border border-gray-800/50 hover:border-gray-700"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2 text-gray-400 text-sm font-medium">
+                Difficulty:
+              </div>
+              {difficulties.map((difficulty) => (
+                <button
+                  key={difficulty}
+                  onClick={() => setDifficultyFilter(difficulty)}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+                    difficultyFilter === difficulty
+                      ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-600/20"
+                      : "bg-[#0b121f] text-gray-400 hover:text-white border border-gray-800/50 hover:border-gray-700"
+                  }`}
+                >
+                  {difficulty}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-white">
+            {filteredCourses.length}{" "}
+            {filteredCourses.length === 1 ? "Course" : "Courses"} Found
+          </h2>
+          {(selectedCategory !== "All" ||
+            difficultyFilter !== "All" ||
+            searchTerm) && (
+            <button
+              onClick={() => {
+                setSelectedCategory("All");
+                setDifficultyFilter("All");
+                setSearchTerm("");
+              }}
+              className="px-4 py-2 text-sm font-semibold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-all"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-gray-400">Loading courses...</p>
+            </div>
+          </div>
+        ) : filteredCourses.length === 0 ? (
+          <div className="text-center py-20 bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-2xl border border-gray-800/50">
+            <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="text-gray-500"
+              >
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              No courses found
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Try adjusting your filters or search terms
+            </p>
+            <button
+              onClick={() => {
+                setSelectedCategory("All");
+                setDifficultyFilter("All");
+                setSearchTerm("");
+              }}
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-600/20"
+            >
+              Clear All Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCourses.map((course) => (
+              <div
+                key={course._id}
+                className="group relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-2xl border border-gray-800/50 overflow-hidden hover:border-blue-500/50 transition-all hover:transform hover:scale-[1.02] cursor-pointer"
+                onClick={() => navigate(`/courses/${course._id}/modules`)}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all"></div>
+
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#141d2b] via-transparent to-transparent"></div>
+
+                  {/* Badges on image */}
+                  <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
+                    <div
+                      className={`px-3 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${getCategoryColor(
+                        course.type
+                      )} shadow-lg`}
+                    >
+                      {course.type}
+                    </div>
+                    <div className="px-3 py-1 rounded-lg text-xs font-bold text-white bg-black/50 backdrop-blur-sm border border-white/20">
+                      {course.hours}h
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative p-6">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">
+                    {course.title}
+                  </h3>
+
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                    {course.detail}
+                  </p>
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                      </svg>
+                      {course.modules?.length || 0} Modules
+                    </div>
+                    <div
+                      className={`px-2 py-1 rounded text-xs font-semibold border ${getComplexityColor(
+                        course.complexity
+                      )}`}
+                    >
+                      {course.complexity}
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  {course.tag && course.tag.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {course.tag.slice(0, 3).map((tag, index) => (
+                        <span
+                          key={index}
+                          className="text-xs px-2 py-1 bg-gray-700/50 text-gray-400 rounded border border-gray-600/50"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Action Button */}
+                  <button className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 group-hover:shadow-blue-600/40">
+                    Start Learning
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="group-hover:translate-x-1 transition-transform"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
-};
+}
 
 export default Modules;

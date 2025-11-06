@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import less from "refractor/lang/less";
 
-function LessonForm({
-  isOpen,
-  onClose,
-  moduleId,
-  onLessonCreated,
-  existingLessonsCount,
-}) {
+function EditLessonForm({ isOpen, onClose, lesson }) {
   const [formData, setFormData] = useState({
-    title: "",
-    markdownContent: "",
+    title: lesson.title,
+    markdownContent: lesson.markdownContent,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +23,7 @@ function LessonForm({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, existingLessonsCount]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -50,13 +45,13 @@ function LessonForm({
     e.preventDefault();
     setError("");
     setLoading(true);
+    console.log(formData, "this is form data");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/lesson/create-lesson",
+      const response = await axios.put(
+        `http://localhost:5001/api/lesson/${lesson._id}`,
         {
           ...formData,
-          id: moduleId,
         },
         { withCredentials: true }
       );
@@ -64,11 +59,9 @@ function LessonForm({
       console.log("Lesson created:", response.data);
 
       setFormData({
-        title: "",
-        markdownContent: "",
+        title: lesson?.title || "",
+        markdownContent: lesson?.markdownContent || "",
       });
-
-      onLessonCreated();
     } catch (err) {
       console.error("Error creating lesson:", err);
       setError(err.response?.data?.message || "Failed to create lesson");
@@ -441,7 +434,7 @@ function LessonForm({
             disabled={loading}
             className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all shadow-lg shadow-blue-600/20"
           >
-            {loading ? "Creating..." : "Create Lesson"}
+            {loading ? "Editing..." : "Edit Lesson"}
           </button>
           <button
             type="button"
@@ -457,4 +450,4 @@ function LessonForm({
   );
 }
 
-export default LessonForm;
+export default EditLessonForm;

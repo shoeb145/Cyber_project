@@ -9,15 +9,15 @@ import React from "react";
 
 function HomePage() {
   return (
-    <>
+    <div className="bg-[#e6d9cc]">
       <Hero />
       <Home_page />
       <BenefitsSection />
-      <VideoSection />
+      {/* <VideoSection /> */}
       <CounterSection />
       <CaseStudiesSection />
       <ReviewSection />
-    </>
+    </div>
   );
 }
 

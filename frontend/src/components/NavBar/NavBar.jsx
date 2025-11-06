@@ -6,9 +6,11 @@ function NavBar({ user }) {
   const navigate = useNavigate();
   const handleSignOut = async () => {
     try {
-      await axios.post("http://localhost:5001/api/auth/sign-out", {
-        withCredentials: true,
-      });
+      await axios.post(
+        "http://localhost:5001/api/auth/sign-out",
+        {},
+        { withCredentials: true }
+      );
       // Clear user data
 
       navigate("/login");

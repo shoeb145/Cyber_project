@@ -1,85 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./CounterSection.css";
 
-const counters = [
-  {
-    value: 150,
-    suffix: "+",
-    label: "Certified Security Officers",
-  },
-  {
-    value: 12,
-    suffix: "+",
-    label: "Years of Experience",
-  },
-  {
-    value: 4.9,
-    suffix: "/5",
-    label: "Client Satisfaction Rating",
-  },
-  {
-    value: 99.9,
-    suffix: "%",
-    label: "Incident-Free Rate",
-  },
-];
-
-
-const CounterCard = ({ value, suffix, label, isDecimal }) => {
-  const [count, setCount] = useState(1);
-  useEffect(() => {
-    let start = 1;
-    let end = value;
-    let duration = 1200; // ms
-    let frame = 0;
-    let totalFrames = 60;
-    let increment = (end - start) / totalFrames;
-    let raf;
-    function animate() {
-      frame++;
-      let next = start + increment * frame;
-      if (isDecimal) {
-        next = Math.min(end, Math.round(next * 10) / 10);
-      } else {
-        next = Math.min(end, Math.round(next));
-      }
-      setCount(next);
-      if (frame < totalFrames) {
-        raf = requestAnimationFrame(animate);
-      } else {
-        setCount(end);
-      }
-    }
-    animate();
-    return () => cancelAnimationFrame(raf);
-  }, [value, isDecimal]);
-  return (
-    <div className="counter-card">
-      <div className="counter-value">
-        <span className="counter-number">{isDecimal ? count.toFixed(1) : count}</span>
-        <span className="counter-suffix">{suffix}</span>
-      </div>
-      <div className="counter-label">{label}</div>
-    </div>
-  );
-};
-
 const CounterSection = () => {
+  const stats = [
+    { number: "10,000+", label: "Active Students", icon: "👨‍🎓" },
+    { number: "100+", label: "Courses", icon: "📚" },
+    { number: "95%", label: "Success Rate", icon: "🎯" },
+    { number: "24/7", label: "Support", icon: "💬" },
+  ];
+
   return (
-    <section className="counter-section">
-      <div className="counter-container">
-        {counters.map((counter, idx) => (
-          <CounterCard
-            key={idx}
-            value={counter.value}
-            suffix={counter.suffix}
-            label={counter.label}
-            isDecimal={counter.value % 1 !== 0}
-          />
-        ))}
+    <section className="py-20 bg-gradient-to-br from-[#141d2b] via-[#0b121f] to-[#141d2b]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-4xl mb-3">{stat.icon}</div>
+              <div className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                {stat.number}
+              </div>
+              <div className="text-gray-400 text-sm font-medium">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 };
-
 export default CounterSection;

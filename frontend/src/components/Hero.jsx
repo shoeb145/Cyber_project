@@ -29,204 +29,214 @@ const TestimonialCard = ({ quote, author, position }) => {
 
 const Hero = () => {
   return (
-    <div id="background">
-      <div className="secuby-container">
-        <HomeNav />
-        <main>
-          <section className="hero-section" id="hero">
-            <div className="hero-content">
-              <div className="tag-pill">
-                <span className="tag-text text-green">
-                  Trusted Protection for Every Doorstep
+    <>
+      <HomeNav />
+
+      <section
+        id="home"
+        className="relative min-h-screen bg-gradient-to-br from-[#0b121f] via-[#141d2b] to-[#0b121f] overflow-hidden"
+      >
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        </div>
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-full backdrop-blur-sm">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="text-blue-400 text-sm font-semibold">
+                  Now Offering Online Training
                 </span>
               </div>
-              <h1 className="hero-title">
-                Reliable Cyber Security for Your Peace of Mind
+
+              {/* Main Headline */}
+              <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                  Master Cybersecurity
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                  Through Real-World Training
+                </span>
               </h1>
 
-              <p className="hero-subtitle">
-                At Redzone we provide trusted, around-the-clock security
-                solutions tailored to protect.
+              {/* Subheadline */}
+              <p className="text-xl text-gray-400 leading-relaxed max-w-xl">
+                Learn offensive and defensive security techniques from industry
+                experts. Start with comprehensive text-based courses and advance
+                your cybersecurity career.
               </p>
 
-              <div className="cta-buttons">
-                <a href="#demo" className="primary-button">
-                  Start Protecting Your Presence
-                </a>
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                  <span className="relative flex items-center justify-center gap-2">
+                    Start Now
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="group-hover:translate-x-1 transition-transform"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </span>
+                </button>
+
+                <button className="px-8 py-4 rounded-xl font-semibold text-white border border-gray-700 hover:border-blue-500/50 hover:bg-white/5 transition-all flex items-center justify-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
+                  Watch Demo
+                </button>
               </div>
-            </div>
 
-            {/* <div className="hero-image" aria-hidden="true">
-            <div className="image-container">
-              <img
-                src="--https://framerusercontent.com/images/cX3Ve1gMhvYi44m691mXK99jUs.png"
-                alt="Cyber Security Visualization"
-                className="main-image"
-              />
-              <div className="image-decoration left-decoration" />
-              <div className="image-decoration right-decoration" />
-              <div className="image-indicator">
-                <span className="indicator-dot" />
-              </div>
-            </div>
-          </div> */}
-          </section>
-
-          {/* <section className="features-section" id="features">
-          <h2 className="section-title">Advanced Protection For Your Financial Assets</h2>
-
-          <div className="features-grid">
-            <FeatureCard
-              title="Threat Detection"
-              description="Identify and neutralize cyber threats before they compromise your systems."
-              icon="shield-icon"
-            />
-            <FeatureCard
-              title="Data Encryption"
-              description="Secure sensitive financial data with military-grade encryption standards."
-              icon="lock-icon"
-            />
-            <FeatureCard
-              title="Compliance"
-              description="Stay compliant with financial regulations and security standards."
-              icon="document-icon"
-            />
-          </div>
-        </section> */}
-
-          {/* <section className="solutions-section" id="solutions">
-          <div className="solutions-content">
-            <div className="solutions-info">
-              <h2 className="solutions-title">Real-Time Monitoring</h2>
-              <p className="solutions-description">
-                Our security operations center monitors your systems 24/7, providing immediate
-                response to potential security incidents.
-              </p>
-
-              <div className="solutions-features">
-                <div className="feature-item">
-                  <span className="feature-indicator" />
-                  <span className="feature-text">Continuous Monitoring</span>
+              {/* Trust Indicators */}
+              <div className="flex items-center gap-8 pt-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-[#0b121f] flex items-center justify-center text-white text-xs font-bold"
+                      >
+                        {String.fromCharCode(64 + i)}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-sm">
+                    <div className="text-white font-semibold">10,000+</div>
+                    <div className="text-gray-500 text-xs">Active Students</div>
+                  </div>
                 </div>
-                <div className="feature-item">
-                  <span className="feature-indicator" />
-                  <span className="feature-text">Instant Alerts</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-indicator" />
-                  <span className="feature-text">Rapid Response</span>
+
+                <div className="h-8 w-px bg-gray-800"></div>
+
+                <div className="text-sm">
+                  <div className="flex items-center gap-1 text-yellow-400 font-semibold">
+                    4.9
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </div>
+                  <div className="text-gray-500 text-xs">500+ Reviews</div>
                 </div>
               </div>
             </div>
 
-            <div className="solutions-visual" aria-hidden="true">
-              <div className="visual-container">
-                <div className="glow-effect green-glow" />
-                <div className="glow-effect blue-glow" />
-                <img
-                  src="https://framerusercontent.com/images/example-security-dashboard.png"
-                  alt="Security Dashboard"
-                  className="dashboard-image"
-                />
+            {/* Right Visual */}
+            <div className="relative">
+              {/* Floating card mockup */}
+              <div className="relative">
+                {/* Main card */}
+                <div className="relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-2xl border border-gray-800/50 p-6 shadow-2xl">
+                  {/* Terminal header */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="ml-auto text-xs text-gray-500 font-mono">
+                      terminal
+                    </span>
+                  </div>
+
+                  {/* Code content */}
+                  <div className="font-mono text-sm space-y-2">
+                    <div className="text-green-400">$ macksofy-learn start</div>
+                    <div className="text-gray-500">
+                      Initializing cybersecurity training...
+                    </div>
+                    <div className="text-blue-400">
+                      ✓ Loading course: Penetration Testing
+                    </div>
+                    <div className="text-blue-400">
+                      ✓ Modules: 15 | Lessons: 127
+                    </div>
+                    <div className="text-purple-400">
+                      ✓ Progress: 34% complete
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <span>Next lesson:</span>
+                      <span className="text-cyan-400">
+                        SQL Injection Basics
+                      </span>
+                    </div>
+                    <div className="text-gray-500 mt-4 animate-pulse">▊</div>
+                  </div>
+                </div>
+
+                {/* Floating badges */}
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-xl shadow-lg transform rotate-3 hover:rotate-0 transition-transform">
+                  <div className="font-bold">100+</div>
+                  <div className="text-xs opacity-90">Lessons</div>
+                </div>
+
+                <div className="absolute -bottom-4 -left-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-xl shadow-lg transform -rotate-3 hover:rotate-0 transition-transform">
+                  <div className="font-bold">Certificate</div>
+                  <div className="text-xs opacity-90">Included</div>
+                </div>
+
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-3xl -z-10"></div>
               </div>
             </div>
           </div>
-        </section> */}
 
-          {/* <section className="testimonials-section" id="testimonials">
-          <div className="testimonial-header">
-            <div className="tag-pill small">
-              <span className="tag-indicator" />
-              <span className="tag-text">Trusted By Leaders</span>
-            </div>
-
-            <h2 className="section-title">What Our Clients Say</h2>
-          </div>
-
-          <div className="testimonials-grid">
-            <TestimonialCard
-              quote="Secuby has transformed our security posture. We feel confident in our ability to protect customer data."
-              author="Maria Chen"
-              position="CTO, Financial Services Inc."
-            />
-            <TestimonialCard
-              quote="The real-time monitoring capabilities have helped us identify and address threats before they become problems."
-              author="James Wilson"
-              position="Security Director, Global Bank"
-            />
-            <TestimonialCard
-              quote="Implementing Secuby's solutions helped us achieve compliance with industry regulations while strengthening our security."
-              author="Sarah Johnson"
-              position="Compliance Officer, Investment Firm"
-            />
-            <TestimonialCard
-              quote="The expertise of the Secuby team is unmatched. They understand the unique security challenges of the financial sector."
-              author="Michael Brown"
-              position="CEO, Online Payment Platform"
-            />
-          </div>
-        </section> */}
-        </main>
-
-        {/* <footer className="footer" role="contentinfo">
-        <div className="footer-content">
-          <div className="footer-info">
-            <div className="footer-logo">
-              <img
-                src="https://framerusercontent.com/images/U2I7fLtX2zVVMKW9URIZ9olX0.svg"
-                alt="Secuby Logo"
-              />
-            </div>
-
-            <p className="footer-description">
-              Providing comprehensive cyber security solutions for financial institutions and services.
-            </p>
-          </div>
-
-          <div className="footer-links" aria-hidden="true">
-            <div className="link-group">
-              <h4 className="link-group-title">Product</h4>
-              <ul>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#integrations">Integrations</a></li>
-              </ul>
-            </div>
-
-            <div className="link-group">
-              <h4 className="link-group-title">Company</h4>
-              <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#team">Team</a></li>
-                <li><a href="#careers">Careers</a></li>
-              </ul>
-            </div>
-
-            <div className="link-group">
-              <h4 className="link-group-title">Resources</h4>
-              <ul>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#documentation">Documentation</a></li>
-                <li><a href="#support">Support</a></li>
-              </ul>
-            </div>
+          {/* Scroll indicator */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+            <span className="text-gray-500 text-sm">Scroll to explore</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-gray-500"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-
-        <div className="footer-bottom">
-          <div className="copyright">
-            © {new Date().getFullYear()} Secuby. All rights reserved.
-          </div>
-
-          <div className="social-links" aria-hidden="true">
-            <a href="#linkedin" className="social-icon linkedin" />
-            <a href="#twitter" className="social-icon twitter" />
-            <a href="#facebook" className="social-icon facebook" />
-          </div>
-        </div>
-      </footer> */}
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
 

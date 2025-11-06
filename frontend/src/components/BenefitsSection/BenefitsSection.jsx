@@ -1,92 +1,67 @@
-import React from 'react';
-import './BenefitsSection.css';
+import React from "react";
+import "./BenefitsSection.css";
 
 const BenefitsSection = () => {
   const benefits = [
     {
-      id: 1,
-      title: "Customized Security Plans",
-      description: "No two properties are alike. We assess your specific risks and goals to deliver."
+      icon: "📚",
+      title: "Structured Learning Path",
+      description:
+        "Follow curated courses from basics to advanced techniques with clear progression",
     },
     {
-      id: 2,
-      title: "Rapid Response Team",
-      description: "In the face of an emergency, every second counts our rapid response units."
+      icon: "💻",
+      title: "Hands-On Practice",
+      description:
+        "Apply knowledge in simulated environments and real-world scenarios",
     },
     {
-      id: 3,
-      title: "Peace of Mind, Guaranteed",
-      description: "From surveillance cameras and access control systems to mobile patrol."
-    }
+      icon: "🔄",
+      title: "Updated Weekly",
+      description:
+        "Content constantly refreshed to reflect current threats and best practices",
+    },
+    {
+      icon: "♾️",
+      title: "Lifetime Access",
+      description:
+        "Learn at your own pace with permanent access to all course materials",
+    },
   ];
 
   return (
-    <section className="benefits-section" data-framer-name="Benefits Section">
-      <div className="benefits-container" data-framer-name="Container">
-        {/* Section Title */}
-        <div className="benefits-title-wrapper">
-          <div className="benefits-title-content" data-framer-name="Text Content">
-            <div className="benefits-title-container" data-framer-component-type="RichTextContainer">
-              <h2 className="benefits-title">
-                Benefits of choosing <br/> Secuby® security
-              </h2>
-            </div>
-          </div>
+    <section className="py-20 bg-[#0b121f]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+            Why Choose{" "}
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Macksofy Tech
+            </span>
+          </h2>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Learn cybersecurity the right way with comprehensive, practical
+            training
+          </p>
         </div>
 
-        {/* Benefit Image */}
-        <div className="benefits-image" data-framer-name="Benefit Image">
-          <div className="benefits-blur-1" data-framer-name="Blur"></div>
-          <div className="benefits-blur-2" data-framer-name="Blur"></div>
-          
-          <div className="benefits-shape-outer" data-framer-name="Shape">
-            <div className="benefits-image-wrapper" data-framer-background-image-wrapper="true">
-              <img 
-                decoding="async" 
-                loading="lazy"
-                width="506" 
-                height="506"
-                src="https://framerusercontent.com/images/CfzVp8kJuwa335WS2z7fC6orkR4.svg"
-                alt="Security Benefits"
-                className="benefits-main-image"
-              />
-            </div>
-          </div>
-          
-          <div className="benefits-shape-inner">
-            <div className="benefits-image-wrapper" data-framer-background-image-wrapper="true">
-              <img 
-                decoding="async" 
-                loading="lazy"
-                width="306" 
-                height="306"
-                src="https://framerusercontent.com/images/tuFQna4G2XlSgxwIrcx6iOeO7w.svg"
-                alt="Security Shape"
-                className="benefits-inner-image"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Benefits List */}
-        <div className="benefits-list" data-framer-name="Benefit List">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map((benefit, index) => (
-            <div key={benefit.id} className="benefit-item-container">
-              <div 
-                className={`benefit-item ${index === benefits.length - 1 ? 'last-item' : ''}`}
-                data-border="true" 
-                data-framer-name="Desktop"
-              >
-                <div className="benefit-title-container" data-framer-component-type="RichTextContainer">
-                  <p className="benefit-title">
-                    {benefit.title}
-                  </p>
-                </div>
-                <div className="benefit-description-container" data-framer-component-type="RichTextContainer">
-                  <p className="benefit-description">
-                    {benefit.description}
-                  </p>
-                </div>
+            <div
+              key={index}
+              className="group relative bg-gradient-to-br from-[#141d2b] to-[#0b121f] rounded-2xl border border-gray-800/50 p-6 hover:border-blue-500/50 transition-all hover:transform hover:scale-105"
+            >
+              {/* Glow effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 rounded-2xl transition-all"></div>
+
+              <div className="relative">
+                <div className="text-5xl mb-4">{benefit.icon}</div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {benefit.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {benefit.description}
+                </p>
               </div>
             </div>
           ))}
@@ -95,5 +70,4 @@ const BenefitsSection = () => {
     </section>
   );
 };
-
 export default BenefitsSection;

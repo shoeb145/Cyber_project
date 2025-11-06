@@ -3,9 +3,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import EditLessonForm from "./EditLessonForm";
 
 function LessonPreview({ lesson }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  console.log(lesson);
 
   return (
     <div className="relative ">
@@ -151,7 +154,10 @@ function LessonPreview({ lesson }) {
               {/* Action buttons */}
               <div className="flex gap-2">
                 <button
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setIsEditing(true);
+                    setSelectedCourse(lesson);
+                  }}
                   className="group relative p-3 rounded-xl bg-gray-800/50 border border-gray-700 hover:border-blue-500/50 hover:bg-gray-800 transition-all overflow-hidden"
                   title="Edit Lesson"
                 >
@@ -467,6 +473,13 @@ function LessonPreview({ lesson }) {
           </div>
         </div>
       </div>
+      {isEditing && selectedCourse && (
+        <EditLessonForm
+          isOpen={isEditing}
+          onClose={() => setIsEditing(false)}
+          lesson={selectedCourse}
+        />
+      )}
     </div>
   );
 }
