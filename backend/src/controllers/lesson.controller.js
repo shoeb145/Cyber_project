@@ -51,16 +51,17 @@ export const getLessonsByModule = async (req, res, next) => {
       path: "lessons",
       options: { sort: { order: 1 } }, // Sort by order ascending
     });
-    console.log(module);
-    console.log(module.lessons, "this is lessons");
+
+    // ✅ Check before accessing module.lessons
     if (!module) {
       const error = new Error("Module not found");
       error.code = 404;
       throw error;
     }
-    console.log(module.lessons, "this is lessons");
 
-    // Respond with clean structured data
+    console.log(module.lessons || [], "this is lessons");
+
+    // Respond safely even if lessons is empty
     res.status(200).json({
       success: true,
       module: {
@@ -70,11 +71,38 @@ export const getLessonsByModule = async (req, res, next) => {
         order: module.order,
         isLocked: module.isLocked,
         unlockCondition: module.unlockCondition,
-        totalLessons: module.lessons.length,
+        totalLessons: module.lessons?.length || 0,
       },
-      lessons: module.lessons,
+      lessons: module.lessons || [], // ✅ safe fallback
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const updateLesson = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const { title, markdownContent } = req.body;
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+      id,
+      { title, markdownContent },
+      { new: true }
+    );
+
+    if (!updatedLesson) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Lesson not found" });
+    }
+    console.log(updatedLesson);
+    res.status(200).json({
+      success: true,
+      message: "Lesson updated successfully",
+      course: updatedLesson,
+    });
+  } catch (error) {
+    res.status(404).json({ success: false, message: "Lesson not Updated " });
   }
 };

@@ -155,6 +155,8 @@ export const signOut = async (req, res) => {
     httpOnly: true,
     secure: false,
     sameSite: "lax",
+    path: "/", // 👈 This is critical
   });
+  return res.status(200).json({ message: "Logged out successfully" });
   return res.status(200).json({ message: "Logged out successfully" });
 };

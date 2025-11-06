@@ -2,6 +2,7 @@ import express from "express";
 import {
   createLesson,
   getLessonsByModule,
+  updateLesson,
 } from "../controllers/lesson.controller.js";
 import { roleCheck } from "../middleware/role.middleware.js";
 
@@ -13,5 +14,6 @@ lessonRoute.get(
   roleCheck(["admin", "user"]),
   getLessonsByModule
 );
+lessonRoute.put("/:id", roleCheck(["admin"]), updateLesson);
 
 export default lessonRoute;
