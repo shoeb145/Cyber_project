@@ -120,14 +120,14 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
       {/* Sidebar */}
-      <div className="hidden md:block">
+      <div className="flex-shrink-0">
         <Sidebar user={user} stats={stats} />
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 min-w-0 p-6 overflow-auto">
         {/* Enhanced Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -141,7 +141,7 @@ export default function Dashboard() {
             <p className="text-gray-400 mt-2">Continue your journey to cybersecurity mastery</p>
           </div>
           
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <Button
               variant="secondary"
               onClick={toggleDarkMode}
@@ -149,7 +149,7 @@ export default function Dashboard() {
             >
               {darkMode ? 'Light' : 'Dark'}
             </Button>
-          </div>
+          </div> */}
         </motion.div>
 
         {/* Quick Stats Grid */}

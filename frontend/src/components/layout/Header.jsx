@@ -98,7 +98,7 @@ export default function Header() {
 
           {/* Right controls */}
           <div className="flex items-center gap-3">
-            <motion.button
+            {/* <motion.button
               onClick={toggleTheme}
               aria-label="Toggle theme"
               className="p-2 rounded-xl hover:bg-gray-800 transition border border-gray-700"
@@ -110,7 +110,7 @@ export default function Header() {
               ) : (
                 <Moon className="w-4 h-4 text-blue-600" />
               )}
-            </motion.button>
+            </motion.button> */}
 
             <Link to="/login" className="text-sm px-4 py-2 rounded-xl hover:bg-gray-800 transition text-gray-300 hover:text-cyan-400 border border-gray-700">
               Login

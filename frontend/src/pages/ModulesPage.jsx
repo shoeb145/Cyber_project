@@ -167,7 +167,7 @@ export default function ModulesPage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.1 }}
               >
-                Learning Modules
+                Learning courses
               </motion.h1>
               <motion.p 
                 className="text-gray-400 text-lg"
@@ -308,7 +308,7 @@ export default function ModulesPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
-              Available Modules {searchResults.length > 0 && `(${searchResults.length})`}
+              Available courses {searchResults.length > 0 && `(${searchResults.length})`}
             </h2>
             <div className="text-gray-400 text-sm">
               Showing {searchResults.length} of {modules.length} modules
