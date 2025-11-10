@@ -2,10 +2,11 @@ import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, BookOpen, FlaskConical, Users, Trophy, Settings, LogOut, Zap, Target } from 'lucide-react'
-
+import axios from 'axios'
 const Sidebar = ({ user, stats }) => {
   const navigate = useNavigate()
   const location = useLocation()
+
 
   const navigationItems = [
     { icon: Shield, label: 'Dashboard', path: '/dashboard' },
@@ -26,13 +27,26 @@ const Sidebar = ({ user, stats }) => {
   }
 
   const handleNavigation = (path) => {
+    console.log(path)
     navigate(path)
   }
 
-  const handleLogout = () => {
-    // Logout logic here
-    navigate('/login')
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5001/api/auth/sign-out",
+        {},
+        { withCredentials: true }
+      );
+      // Clear user data
+
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+
   }
+  console.log(user)
 
   return (
     <motion.div
@@ -50,7 +64,7 @@ const Sidebar = ({ user, stats }) => {
       <div className="absolute top-10 right-10 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl"></div>
       <div className="absolute bottom-20 left-10 w-16 h-16 bg-blue-500/10 rounded-full blur-lg"></div>
 
-      <div className="relative z-10 flex flex-col h-full">
+      <div className="relative rounded-full z-10 flex flex-col h-full">
         {/* User Profile Section */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
@@ -63,8 +77,8 @@ const Sidebar = ({ user, stats }) => {
               whileHover={{ scale: 1.1, rotate: 5 }}
               className="relative"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/25">
-                {user?.name?.charAt(0) || 'A'}
+              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/25">
+              <img src={user?.avatar} alt="" srcset="" />  
               </div>
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-gray-900 rounded-full"></div>
             </motion.div>
@@ -74,7 +88,8 @@ const Sidebar = ({ user, stats }) => {
                 className="font-bold text-white truncate text-lg"
                 whileHover={{ color: "#22d3ee" }}
               >
-                {user?.name || 'Atiq Shaikh'}
+                {user?.
+username}
               </motion.h3>
               <div className="flex items-center gap-2 mt-1">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -263,7 +278,7 @@ const Sidebar = ({ user, stats }) => {
             <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center group-hover:bg-red-500/30 transition-colors">
               <LogOut className="w-5 h-5" />
             </div>
-            <span className="font-medium">Log Out</span>
+            <span className="font-medium" >Log Out</span>
           </motion.button>
         </motion.div>
       </div>

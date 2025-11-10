@@ -8,25 +8,20 @@ import { Eye, EyeOff, Shield, Lock, Mail } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Card from '../components/ui/Card'
+import axios from 'axios'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().min(6, 'Password is required'),
   remember: z.boolean().optional(),
 })
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [demoAccounts] = useState({
-    user: { email: 'user@cyberlearn.com', password: 'demo123' },
-    admin: { email: 'admin@cyberlearn.com', password: 'admin123' },
-    test: { email: 'test@cyberlearn.com', password: 'test123' }
-  })
-  
   const navigate = useNavigate()
-  
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: { 
       email: '', 
@@ -35,39 +30,36 @@ export default function Login() {
     },
   })
 
-  const fillDemoAccount = (accountType) => {
-    const account = demoAccounts[accountType]
-    setValue('email', account.email)
-    setValue('password', account.password)
-  }
+
 
   const onSubmit = async (data) => {
     setLoading(true)
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    
       
-      console.log('Login attempt:', {
-        email: data.email,
-        password: '***HIDDEN***',
-        remember: data.remember
-      })
-      
-      // Success - redirect to dashboard
-      setTimeout(() => {
-        navigate('/dashboard')
-      }, 500)
-      
+         const response = await axios.post(
+        "http://localhost:5001/api/auth/sign-in",
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      console.log(response,"this is response")
+    if (response.data.success) {
+       
+       navigate("/dashboard");
+      }
     } catch (error) {
-      // In demo, we'll always succeed
-      setTimeout(() => {
-        navigate('/dashboard')
-      }, 500)
+      
+   console.log(error)
     } finally {
       setLoading(false)
     }
   }
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
@@ -114,25 +106,7 @@ export default function Login() {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Testing Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6"
-        >
-          <Card className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-500/20">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-green-400 font-semibold text-sm">Demo Mode Active</span>
-              </div>
-              <p className="text-green-300 text-sm">
-                Any email/password combination will work for testing
-              </p>
-            </div>
-          </Card>
-        </motion.div>
+       
 
         <Card gradient={true} className="backdrop-blur-xl border-cyan-500/20">
           {/* Header */}
@@ -169,26 +143,7 @@ export default function Login() {
             transition={{ delay: 0.4 }}
             className="mb-6"
           >
-            <Card className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-blue-500/20">
-              <p className="text-blue-300 text-sm text-center mb-3 font-medium">
-                Quick Test Accounts
-              </p>
-              <div className="grid grid-cols-3 gap-2">
-                {Object.entries(demoAccounts).map(([key, account]) => (
-                  <motion.button
-                    key={key}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => fillDemoAccount(key)}
-                    className="p-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg transition-colors"
-                  >
-                    <div className="text-blue-400 text-xs font-medium capitalize">
-                      {key}
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </Card>
+            
           </motion.div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -201,7 +156,11 @@ export default function Login() {
               <Input
                 icon={<Mail className="w-4 h-4" />}
                 label="Email Address"
-                type="email"
+                 id="email"
+                  name="email"
+                  type="email"
+               
+            
                 placeholder="Enter your email address"
                 {...register('email')}
                 error={errors.email?.message}
@@ -242,14 +201,7 @@ export default function Login() {
               transition={{ delay: 0.7 }}
               className="flex items-center justify-between"
             >
-              <label className="flex items-center gap-3 text-sm text-gray-300 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  {...register('remember')} 
-                  className="rounded border-gray-600 bg-gray-700 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-gray-800"
-                />
-                Remember me
-              </label>
+             
               
               <button 
                 type="button" 

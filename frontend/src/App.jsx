@@ -8,8 +8,23 @@ import ModulesPage from './pages/ModulesPage'
 import LabsPage from './pages/LabsPage'
 import Community from './pages/Community'
 import ProtectedRoute from './components/layout/ProtectedRoute'
+import PrivateRoute from './lib/PrivateRoute'
+import { useState,useEffect } from 'react'
+import axios from 'axios'
 
 export default function App() {
+   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await axios.get("http://localhost:5001/api/user/me", {
+        withCredentials: true,
+      });
+      setUser(user.data);
+    };
+
+    fetchUser();
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
@@ -20,19 +35,19 @@ export default function App() {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
+          <PrivateRoute allowedRoles={["user", "admin"]}>
+            <Dashboard  user={user}/>
+        </PrivateRoute>
         }
       />
       <Route
-        path="/modules"
-        element={
-          <ProtectedRoute>
-            <ModulesPage />
-          </ProtectedRoute>
-        }
-      />
+  path="/modules"
+  element={
+    <PrivateRoute allowedRoles={["user", "admin"]}>
+      <ModulesPage user={user} />
+    </PrivateRoute>
+  }
+/>
       <Route
         path="/labs"
         element={
