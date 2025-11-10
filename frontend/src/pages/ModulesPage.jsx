@@ -87,7 +87,11 @@ export default function ModulesPage({user}) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.1 }}
               >
+<<<<<<< HEAD
                 Learning Courses
+=======
+                Learning courses
+>>>>>>> 6033a22ffa8694aa25dc2a407ae3fcb88c4c400d
               </motion.h1>
               <motion.p 
                 className="text-gray-400 text-lg"
@@ -228,7 +232,11 @@ export default function ModulesPage({user}) {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
+<<<<<<< HEAD
               Available Courses {searchResults.length > 0 && `(${searchResults.length})`}
+=======
+              Available courses {searchResults.length > 0 && `(${searchResults.length})`}
+>>>>>>> 6033a22ffa8694aa25dc2a407ae3fcb88c4c400d
             </h2>
             <div className="text-gray-400 text-sm">
               Showing {searchResults.length} of {modules.length} modules
