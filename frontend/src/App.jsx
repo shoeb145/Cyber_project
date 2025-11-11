@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard'
 import ModulesPage from './pages/ModulesPage'
 import LabsPage from './pages/LabsPage'
 import Community from './pages/Community'
-import ProtectedRoute from './components/layout/ProtectedRoute'
+
 import PrivateRoute from './lib/PrivateRoute'
 import { useState,useEffect } from 'react'
 import axios from 'axios'
@@ -51,17 +51,17 @@ export default function App() {
       <Route
         path="/labs"
         element={
-          <ProtectedRoute>
+        
             <LabsPage />
-          </ProtectedRoute>
+      
         }
       />
       <Route
         path="/community"
         element={
-          <ProtectedRoute>
+         
             <Community />
-          </ProtectedRoute>
+          
         }
       />
 
