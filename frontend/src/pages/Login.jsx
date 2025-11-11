@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Shield, Lock, Mail } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Card from '../components/ui/Card'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -49,12 +50,13 @@ export default function Login() {
       );
       console.log(response,"this is response")
     if (response.data.success) {
-       
+       toast.success("✅ Login successful! Redirecting...");
+
        navigate("/dashboard");
       }
     } catch (error) {
       
-   console.log(error)
+    toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false)
     }
@@ -62,9 +64,9 @@ export default function Login() {
   
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+    <div className="min-h-screen py-4  flex items-center justify-center px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
       {/* Animated Background */}
-      <div className="absolute inset-0">
+      <div className="absolute  inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_24%,rgba(6,182,212,0.1)_25%,rgba(6,182,212,0.1)_26%,transparent_27%,transparent_74%,rgba(6,182,212,0.1)_75%,rgba(6,182,212,0.1)_76%,transparent_77%),linear-gradient(0deg,transparent_24%,rgba(6,182,212,0.1)_25%,rgba(6,182,212,0.1)_26%,transparent_27%,transparent_74%,rgba(6,182,212,0.1)_75%,rgba(6,182,212,0.1)_76%,transparent_77%)] bg-[length:50px_50px] opacity-20" />
         
         {/* Floating elements */}
@@ -279,12 +281,12 @@ export default function Login() {
             >
               <p className="text-gray-400">
                 Don't have an account?{' '}
-                <a 
-                  href="/register" 
+              <Link
+    to="/register"
                   className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
                 >
                   Sign up here
-                </a>
+                </Link>
               </p>
             </motion.div>
           </form>

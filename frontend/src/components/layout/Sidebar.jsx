@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import toast from 'react-hot-toast'
 
 import { Shield, BookOpen, FlaskConical, Users, Trophy, Settings, LogOut, Zap, Target, Menu, X } from 'lucide-react'
 import axios from 'axios'
@@ -42,8 +43,11 @@ const Sidebar = ({ user, stats }) => {
         { withCredentials: true }
       );
       // Clear user data
+        toast.success("🔐 You are securely logged out.");
 
       navigate("/login");
+    
+
     } catch (err) {
       console.error("Logout failed:", err);
     }

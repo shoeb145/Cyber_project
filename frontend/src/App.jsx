@@ -6,6 +6,8 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import ModulesPage from './pages/ModulesPage'
 import LabsPage from './pages/LabsPage'
+import toast from "react-hot-toast";
+import { Toaster } from 'react-hot-toast'
 import Community from './pages/Community'
 
 import PrivateRoute from './lib/PrivateRoute'
@@ -26,6 +28,53 @@ export default function App() {
     fetchUser();
   }, []);
   return (
+    <>
+   
+<Toaster
+  position="top-right"
+  gutter={12}
+  toastOptions={{
+    // ✅ Base styling (fixing double toast issue)
+    style: {
+      background: "#0A0F1F",
+      color: "#56F6FF",
+      border: "1px solid rgba(0,255,255,0.35)",
+      borderRadius: "14px",
+      padding: "14px 18px",
+      boxShadow: "0 0 12px rgba(0,255,255,0.2)",
+      fontSize: "15px",
+    },
+
+    // ✅ Success Toast (Cyberpunk)
+    success: {
+      duration: 3500,
+      iconTheme: {
+        primary: "#00FFC6",
+        secondary: "#0A0F1F",
+      },
+      style: {
+        border: "1px solid rgba(0,255,198,0.35)",
+        color: "#00F5C8",
+        boxShadow: "0 0 12px rgba(0,255,198,0.25)",
+      },
+    },
+
+    // ✅ Error Toast (Cyberpunk Red)
+    error: {
+      duration: 3500,
+      iconTheme: {
+        primary: "#FF4D4D",
+        secondary: "#0A0F1F",
+      },
+      style: {
+        border: "1px solid rgba(255,77,77,0.35)",
+        color: "#FF6A6A",
+        boxShadow: "0 0 12px rgba(255,77,77,0.25)",
+      },
+    },
+  }}
+/>
+
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
@@ -68,5 +117,6 @@ export default function App() {
       {/* Redirect any unknown route to home */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
+     </>
   )
 }
