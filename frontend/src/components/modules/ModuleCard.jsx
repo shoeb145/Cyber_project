@@ -2,11 +2,11 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { BookOpen, Play, Code, CheckCircle, Clock } from 'lucide-react'
+import { Play, Clock, Zap, TrendingUp, Eye } from 'lucide-react'
 
-const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
+const ModuleCard = ({ module = {}, showProgress = false, showActions = true }) => {
   const navigate = useNavigate()
-  
+
   const getBadgeColor = (badge) => {
     switch (badge) {
       case 'Beginner Friendly':
@@ -34,37 +34,42 @@ const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
   }
 
   const handleStartLearning = () => {
-    navigate(`/module/${module.id}`)
+    if (module?.id) navigate(`/module/${module.id}`)
   }
 
   const handlePreview = () => {
-    console.log('Preview module:', module.id)
+    console.log('Preview module:', module?.id)
   }
+
+  const topics = module.topics ?? []
+  const progress = typeof module.progress === 'number' ? module.progress : 0
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
-      className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 overflow-hidden hover:border-cyan-500/50 transition-all duration-300"
+      className="relative group bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 overflow-hidden hover:border-cyan-500/50 transition-all duration-300"
     >
       {/* Gradient Border Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
-      
+      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none" />
+
       {/* Shine Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
       <div className="p-6 flex-1 relative z-10">
         {/* Header with Badge */}
         <div className="flex justify-between items-start mb-4">
-          <motion.span 
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r ${getBadgeColor(module.badge)} text-white shadow-lg flex items-center gap-1.5`}
+          <motion.span
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r ${getBadgeColor(
+              module.badge
+            )} text-white shadow-lg flex items-center gap-1.5`}
             whileHover={{ scale: 1.05 }}
           >
             {getBadgeIcon(module.badge)}
             {module.badge}
           </motion.span>
-          
+
           {module.isNew && (
             <span className="px-2 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full text-xs font-semibold shadow-lg">
               NEW
@@ -74,31 +79,33 @@ const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
 
         {/* Title and Description */}
         <h3 className="font-bold text-xl mb-3 text-white group-hover:text-cyan-400 transition-colors">
-          {module.title}
+          {module.title ?? 'Untitled Module'}
         </h3>
         <p className="text-gray-300 text-sm mb-6 leading-relaxed">
-          {module.description}
+          {module.description ?? ''}
         </p>
 
         {/* Duration */}
-        <div className="flex items-center gap-2 text-sm text-cyan-400 mb-6">
-          <Clock className="w-4 h-4" />
-          <span>{module.duration}</span>
-        </div>
+        {module.duration && (
+          <div className="flex items-center gap-2 text-sm text-cyan-400 mb-6">
+            <Clock className="w-4 h-4" />
+            <span>{module.duration}</span>
+          </div>
+        )}
 
         {/* Progress Bar */}
         {showProgress && (
           <div className="mb-6">
             <div className="flex justify-between text-sm mb-2">
               <span className="text-gray-300">Progress</span>
-              <span className="font-semibold text-cyan-400">{module.progress}%</span>
+              <span className="font-semibold text-cyan-400">{progress}%</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-              <motion.div 
+              <motion.div
                 className="bg-gradient-to-r from-cyan-500 to-blue-600 h-2 rounded-full shadow-lg shadow-cyan-500/25"
                 initial={{ width: 0 }}
-                animate={{ width: `${module.progress}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 1, ease: 'easeOut' }}
               />
             </div>
           </div>
@@ -107,18 +114,18 @@ const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
         {/* Topics */}
         <div className="mb-2">
           <div className="flex flex-wrap gap-2">
-            {module.topics.slice(0, 3).map((topic, index) => (
-              <motion.span 
+            {topics.slice(0, 3).map((topic, index) => (
+              <motion.span
                 key={index}
                 className="px-3 py-1.5 bg-gray-700/50 backdrop-blur-sm text-gray-300 rounded-xl text-xs border border-gray-600 group-hover:border-cyan-500/30 transition-colors"
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(6, 182, 212, 0.1)' }}
+                whileHover={{ scale: 1.05 }}
               >
                 {topic}
               </motion.span>
             ))}
-            {module.topics.length > 3 && (
+            {topics.length > 3 && (
               <span className="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-xl text-xs border border-gray-600">
-                +{module.topics.length - 3} more
+                +{topics.length - 3} more
               </span>
             )}
           </div>
@@ -136,8 +143,9 @@ const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
               className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-4 rounded-xl font-semibold text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2"
             >
               <Play className="w-4 h-4" />
-              {module.progress > 0 ? 'Continue' : 'Start Learning'}
+              {progress > 0 ? 'Continue' : 'Start Learning'}
             </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -149,7 +157,7 @@ const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
             </motion.button>
           </div>
         </div>
-      </div>
+      )}
     </motion.div>
   )
 }
