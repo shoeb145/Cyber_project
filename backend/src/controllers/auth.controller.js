@@ -41,6 +41,9 @@ if (password.length < 6) {
           email,
           password: hashPassword,
           avatar: "https://avatar.iran.liara.run/public/boy",
+           lastLoginDate: new Date(),    // ✅ first login now
+      currentStreak: 1,             // ✅ start streak
+      maxStreak: 1,       
         },
       ],
       { session }
@@ -77,12 +80,10 @@ if (password.length < 6) {
     session.endSession(); // always end
   }
 };
-
 export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // ✅ Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -90,7 +91,6 @@ export const signIn = async (req, res, next) => {
       });
     }
 
-    // ✅ Check user exists
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(404).json({
@@ -99,7 +99,6 @@ export const signIn = async (req, res, next) => {
       });
     }
 
-    // ✅ Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({
@@ -108,17 +107,45 @@ export const signIn = async (req, res, next) => {
       });
     }
 
-    // ✅ Generate Token
+    /** ---------------- ✅ STREAK SYSTEM ---------------- **/
+
+    // ✅ Add missing fields for old users
+    if (user.currentStreak === undefined) user.currentStreak = 1;
+    if (user.maxStreak === undefined) user.maxStreak = 1;
+    if (!user.lastLoginDate) user.lastLoginDate = new Date();
+
+    const now = new Date();
+    const last = user.lastLoginDate;
+    const diffHours = (now - last) / (1000 * 60 * 60);
+
+    if (diffHours < 24) {
+      // ✅ Already logged in today → no change
+    } else if (diffHours < 48) {
+      // ✅ Logged in after 1 day → increase streak
+      user.currentStreak += 1;
+    } else {
+      // ❌ Missed more than a day → reset streak
+      user.currentStreak = 1;
+    }
+
+    // ✅ Update max streak
+    if (user.currentStreak > user.maxStreak) {
+      user.maxStreak = user.currentStreak;
+    }
+
+    user.lastLoginDate = now;
+    await user.save();
+
+    /** ---------------- ✅ TOKEN ---------------- **/
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
     );
 
-    // ✅ Send cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅ secure only on prod
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -133,11 +160,13 @@ export const signIn = async (req, res, next) => {
         fullName: user.fullName,
         role: user.role,
         avatar: user.avatar,
+
+        // ✅ Return streak values to frontend
+        currentStreak: user.currentStreak,
+        maxStreak: user.maxStreak,
       },
     });
-
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
     next(error);
   }
 };

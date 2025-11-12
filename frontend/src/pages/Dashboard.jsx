@@ -7,6 +7,7 @@ import { LineChart, Line, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tool
 import { useAuthStore } from '../store/useAuthStore'
 import { useNavigate, useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { Flame } from 'lucide-react'
 
 export default function Dashboard({user}) {
 
@@ -62,13 +63,13 @@ export default function Dashboard({user}) {
   }
 
   const quickStats = [
-    { 
-      label: 'Learning Streak', 
-      value: `${stats?.currentStreak || 0} days`, 
-      icon: '🔥',
-      color: 'from-orange-500 to-red-500',
-      trend: '+2'
-    },
+    {
+  label: "Login Streak",
+  current: user?.currentStreak || 0,
+  max: user?.maxStreak || 0,
+  color: "from-purple-600 to-purple-800",
+  icon: <Flame className="text-white" />,
+},
     { 
       label: 'Modules Completed', 
       value: `${stats?.modulesCompleted || 0}/12`, 
@@ -171,9 +172,14 @@ export default function Dashboard({user}) {
               <div className="relative z-10">
                 <div className="text-sm opacity-90">{stat.label}</div>
                 <div className="text-2xl font-bold mt-2">{stat.value}</div>
-                {stat.trend && (
-                  <div className="text-sm opacity-80 mt-1">↑ {stat.trend} this week</div>
-                )}
+               {stat.current !== undefined && (
+  <div className="mt-2">
+    <div className="text-2xl font-bold">{stat.current} days</div>
+    <div className="text-sm opacity-80 mt-1">
+      Highest: {stat.max} days
+    </div>
+  </div>
+)}
                 {stat.progress && (
                   <div className="mt-3">
                     <div className="w-full bg-white/20 rounded-full h-2">
