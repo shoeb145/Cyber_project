@@ -41,6 +41,18 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+     /* ✅ Login Streak System */
+    lastLoginDate: {
+      type: Date,
+    },
+    currentStreak: {
+      type: Number,
+      default: 0,
+    },
+    maxStreak: {
+      type: Number,
+      default: 0,
+    },
     token: {
       type: Number,
       default: 30,
