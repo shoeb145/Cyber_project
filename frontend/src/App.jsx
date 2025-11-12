@@ -4,10 +4,13 @@ import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
-import ModulesPage from './pages/ModulesPage'
 import LabsPage from './pages/LabsPage'
 import Community from './pages/Community'
 import ProtectedRoute from './components/layout/ProtectedRoute'
+import ModulePage from './pages/ModulePage'
+import ModuleContentPage from './pages/ModuleContentPage'
+import ModuleVideoPage from './pages/ModuleVideoPage'
+import CoursePage from './pages/CoursePage'
 
 export default function App() {
   return (
@@ -26,10 +29,35 @@ export default function App() {
         }
       />
       <Route
-        path="/modules"
+        path="/courses"
         element={
           <ProtectedRoute>
-            <ModulesPage />
+            <CoursePage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Module pages */}
+      <Route
+        path="/courses/:courseId/modules"
+        element={
+          <ProtectedRoute>
+            <ModulePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/courses/:courseId/modules/:moduleId/content"
+        element={
+          <ProtectedRoute>
+            <ModuleContentPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/courses/:courseId/modules/:moduleId/video"
+        element={
+          <ProtectedRoute>
+            <ModuleVideoPage />
           </ProtectedRoute>
         }
       />

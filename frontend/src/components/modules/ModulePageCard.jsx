@@ -1,16 +1,15 @@
-// src/components/modules/ModuleCard.jsx
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { BookOpen, Play, Code, CheckCircle, Clock } from 'lucide-react'
 
-const ModuleCard = ({ module, courseId, onProgressUpdate }) => {
+const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
   const navigate = useNavigate()
 
   // Safe completion check with default values
   const getCompletionStatus = () => {
     if (!module.completion) {
-      return { completed: 0, total: 3 } // Default to 0/3 if no completion data
+      return { completed: 0, total: 3 }
     }
     
     const completedCount = Object.values(module.completion).filter(Boolean).length
@@ -151,4 +150,4 @@ const ModuleCard = ({ module, courseId, onProgressUpdate }) => {
   )
 }
 
-export default ModuleCard
+export default ModulePageCard
