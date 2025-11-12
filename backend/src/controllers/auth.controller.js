@@ -13,15 +13,23 @@ export const signUp = async (req, res, next) => {
     if (!username || !fullName || !email || !password) {
       return res
         .status(400)
-        .json({ success: false, message: "All fields are required" });
+        .json({ success: false, message: "Please fill in all required fields." });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      const error = new Error("User already exists");
-      error.code = 409;
-      throw error;
-    }
+  return res.status(409).json({
+    success: false,
+    message: "This email is already in use. Please log in or use a different one."
+  });
+}
+
+if (password.length < 6) {
+  return res.status(400).json({
+    success: false,
+    message: "Your password is too weak. Use at least  characters with letters and numbers."
+  });
+}
 
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -73,44 +81,67 @@ export const signUp = async (req, res, next) => {
 export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return;
 
+    // ✅ Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required.",
+      });
+    }
+
+    // ✅ Check user exists
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      const error = new Error("user does not exist");
-      error.code = 401;
-      throw error;
+      return res.status(404).json({
+        success: false,
+        message: "No account found with this email.",
+      });
     }
-    const hashPassword = user.password;
-    const isValidPassword = await bcrypt.compare(password, hashPassword);
+
+    // ✅ Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      const error = new Error("invalid user");
-      error.code = 401;
-      throw error;
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect password. Please try again.",
+      });
     }
-    const secret = process.env.JWT_SECRET;
-    const expire = process.env.JWT_EXPIRES_IN;
-    const token = jwt.sign({ userId: user._id }, secret, {
-      expiresIn: expire || "1h",
-    });
+
+    // ✅ Generate Token
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+    );
+
+    // ✅ Send cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // set true in production with HTTPS
+      secure: process.env.NODE_ENV === "production", // ✅ secure only on prod
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.status(201).json({
+
+    return res.status(200).json({
       success: true,
-      message: "user logged in ",
-      data: {
-        token,
-        user,
+      message: "Login successful!",
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        fullName: user.fullName,
+        role: user.role,
+        avatar: user.avatar,
       },
     });
+
   } catch (error) {
+    console.error("LOGIN ERROR:", error);
     next(error);
   }
 };
+
 export const verifyUser = async (req, res, next) => {
   try {
     const token = req.cookies.token; // 🍪 JWT from cookie

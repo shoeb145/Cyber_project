@@ -8,8 +8,8 @@ import { useAuthStore } from '../store/useAuthStore'
 import { useNavigate, useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
-export default function Dashboard() {
-  const { user, logout } = useAuthStore()
+export default function Dashboard({user}) {
+
   const [stats, setStats] = useState(null)
   const [darkMode, setDarkMode] = useState(true)
   const [activeView, setActiveView] = useState('overview')
@@ -118,6 +118,8 @@ export default function Dashboard() {
       image: "🚨"
     }
   ]
+
+  console.log(user)
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">

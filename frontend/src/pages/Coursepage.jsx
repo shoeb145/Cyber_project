@@ -6,8 +6,9 @@ import ModuleCard from '../components/modules/ModuleCard'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
+import axios from 'axios'
 
-export default function ModulesPage() {
+export default function ModulesPage({user}) {
   const [modules, setModules] = useState([])
   const [filter, setFilter] = useState('All')
   const [sort, setSort] = useState('Popular')
@@ -17,98 +18,17 @@ export default function ModulesPage() {
 
   useEffect(() => {
     // Enhanced demo data with more details
-    setModules([
-      { 
-        id: 'm1', 
-        badge: 'Beginner', 
-        title: 'Threat Detection Fundamentals', 
-        duration: '8–10 hours', 
-        description: 'Identify and analyze malware and network threats in real time — the ideal starting point for cybersecurity beginners.', 
-        topics: ['Malware analysis basics', 'Network monitoring', 'SIEM introduction', 'Incident reporting'],
-        progress: 0,
-        popularity: 95,
-        isNew: false,
-        students: 1250,
-        rating: 4.9,
-        image: '🛡️',
-        color: 'from-blue-500 to-cyan-500'
-      },
-      { 
-        id: 'm2', 
-        badge: 'Intermediate', 
-        title: 'Web Application Security', 
-        duration: '12–16 hours', 
-        description: 'Hands-on web app security: OWASP Top 10, Burp Suite practice, SQLi & XSS exploitation and defense.', 
-        topics: ['OWASP Top 10', 'Burp Suite', 'SQL Injection', 'Cross Site Scripting'],
-        progress: 65,
-        popularity: 98,
-        isNew: true,
-        students: 890,
-        rating: 4.8,
-        image: '🌐',
-        color: 'from-purple-500 to-pink-500'
-      },
-      { 
-        id: 'm3', 
-        badge: 'Intermediate', 
-        title: 'Network Defense & SOC Ops', 
-        duration: '10–14 hours', 
-        description: 'Run a SOC workflow: configure firewalls, detect intrusions, and harden networks under attack.', 
-        topics: ['Firewall setup', 'IDS/IPS', 'Network forensics', 'Incident response'],
-        progress: 0,
-        popularity: 87,
-        isNew: false,
-        students: 720,
-        rating: 4.7,
-        image: '🔒',
-        color: 'from-green-500 to-emerald-500'
-      },
-      { 
-        id: 'm4', 
-        badge: 'Advanced', 
-        title: 'Advanced Penetration Testing', 
-        duration: '15–20 hours', 
-        description: 'Master advanced exploitation techniques and post-exploitation tactics.', 
-        topics: ['Advanced exploitation', 'Post-exploitation', 'Lateral movement', 'Persistence'],
-        progress: 0,
-        popularity: 76,
-        isNew: false,
-        students: 450,
-        rating: 4.9,
-        image: '⚔️',
-        color: 'from-red-500 to-orange-500'
-      },
-      { 
-        id: 'm5', 
-        badge: 'Beginner', 
-        title: 'Cybersecurity Fundamentals', 
-        duration: '6–8 hours', 
-        description: 'Learn the core concepts and principles of cybersecurity.', 
-        topics: ['Security principles', 'Risk management', 'Cryptography basics', 'Security policies'],
-        progress: 100,
-        popularity: 92,
-        isNew: false,
-        students: 2100,
-        rating: 4.6,
-        image: '📚',
-        color: 'from-indigo-500 to-purple-500'
-      },
-      { 
-        id: 'm6', 
-        badge: 'Intermediate', 
-        title: 'Cloud Security Fundamentals', 
-        duration: '10–12 hours', 
-        description: 'Secure cloud infrastructure and services across major cloud platforms.', 
-        topics: ['AWS security', 'Azure security', 'Cloud compliance', 'Identity management'],
-        progress: 30,
-        popularity: 88,
-        isNew: true,
-        students: 680,
-        rating: 4.7,
-        image: '☁️',
-        color: 'from-cyan-500 to-blue-500'
+     const fetchData = async () => {
+      try {
+        const res = await axios.get("http://localhost:5001/api/courses", {
+          withCredentials: true,
+        });
+        setModules(res.data.course);
+      } catch (error) {
+        console.log(error);
       }
-    ])
+    };
+    fetchData();
   }, [])
 
   const filteredModules = modules.filter(module => {
@@ -139,7 +59,7 @@ export default function ModulesPage() {
   )
 
   const stats = [
-    { label: 'Total Modules', value: '12', icon: BookOpen, color: 'blue' },
+    { label: 'Total Courses', value: '12', icon: BookOpen, color: 'blue' },
     { label: 'Completed', value: progress.completed.toString(), icon: Target, color: 'green' },
     { label: 'In Progress', value: '2', icon: TrendingUp, color: 'yellow' },
     { label: 'Hours Learned', value: '42', icon: Clock, color: 'purple' }
@@ -147,10 +67,10 @@ export default function ModulesPage() {
 
   const filters = ['All', 'Beginner', 'Intermediate', 'Advanced']
   const sortOptions = ['Popular', 'Newest', 'Difficulty', 'Progress']
-
+ console.log(modules)
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <Sidebar />
+      <Sidebar user={user} />
       
       <main className="flex-1 p-6 overflow-auto">
         {/* Header Section */}
@@ -167,7 +87,7 @@ export default function ModulesPage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.1 }}
               >
-                Learning courses
+                Learning Courses
               </motion.h1>
               <motion.p 
                 className="text-gray-400 text-lg"
@@ -308,7 +228,7 @@ export default function ModulesPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
-              Available courses {searchResults.length > 0 && `(${searchResults.length})`}
+              Available Courses {searchResults.length > 0 && `(${searchResults.length})`}
             </h2>
             <div className="text-gray-400 text-sm">
               Showing {searchResults.length} of {modules.length} modules

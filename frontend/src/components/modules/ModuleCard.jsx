@@ -4,48 +4,42 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { BookOpen, Play, Code, CheckCircle, Clock } from 'lucide-react'
 
-const ModuleCard = ({ module, courseId, onProgressUpdate }) => {
+const ModuleCard = ({ module, showProgress = false, showActions = true }) => {
   const navigate = useNavigate()
-
-  // Safe completion check with default values
-  const getCompletionStatus = () => {
-    if (!module.completion) {
-      return { completed: 0, total: 3 } // Default to 0/3 if no completion data
-    }
-    
-    const completedCount = Object.values(module.completion).filter(Boolean).length
-    const totalCount = Object.values(module.completion).length
-    return { completed: completedCount, total: totalCount }
-  }
-
-  const handleContentClick = () => {
-    navigate(`/courses/${courseId}/modules/${module.id}/content`)
-    // Mark as completed when user visits content
-    if (onProgressUpdate) {
-      onProgressUpdate(module.id, 'content', true)
+  
+  const getBadgeColor = (badge) => {
+    switch (badge) {
+      case 'Beginner Friendly':
+        return 'from-green-500 to-emerald-400'
+      case 'Most Popular':
+        return 'from-cyan-500 to-blue-500'
+      case 'Career Track':
+        return 'from-purple-500 to-pink-500'
+      default:
+        return 'from-gray-500 to-gray-600'
     }
   }
 
-  const handleVideoClick = () => {
-    navigate(`/courses/${courseId}/modules/${module.id}/video`)
-    // Mark as completed when user visits video
-    if (onProgressUpdate) {
-      onProgressUpdate(module.id, 'video', true)
+  const getBadgeIcon = (badge) => {
+    switch (badge) {
+      case 'Beginner Friendly':
+        return <Zap className="w-3 h-3" />
+      case 'Most Popular':
+        return <TrendingUp className="w-3 h-3" />
+      case 'Career Track':
+        return <Play className="w-3 h-3" />
+      default:
+        return <Zap className="w-3 h-3" />
     }
   }
 
-  const handleLabClick = () => {
-    // Lab functionality will be implemented later
-    console.log('Lab functionality coming soon')
+  const handleStartLearning = () => {
+    navigate(`/module/${module.id}`)
   }
 
-  // Safe completion status with defaults
-  const { completed, total } = getCompletionStatus()
-
-  // Safe completion checks for individual types
-  const isContentCompleted = module.completion?.content || false
-  const isVideoCompleted = module.completion?.video || false
-  const isLabCompleted = module.completion?.lab || false
+  const handlePreview = () => {
+    console.log('Preview module:', module.id)
+  }
 
   return (
     <motion.div
@@ -54,96 +48,105 @@ const ModuleCard = ({ module, courseId, onProgressUpdate }) => {
       whileHover={{ scale: 1.02 }}
       className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 overflow-hidden hover:border-cyan-500/50 transition-all duration-300"
     >
-      <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Left Side - Module Information (70%) */}
-          <div className="flex-1 md:flex-[70%]">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                {module.number || 1}
-              </div>
-              <h3 className="text-xl font-bold text-white">{module.title || 'Untitled Module'}</h3>
-            </div>
-            
-            <p className="text-gray-300 text-sm mb-3">
-              {module.description || 'Module description not available'}
-            </p>
-            
-            <div className="flex items-center gap-4 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{module.duration || 'No duration'}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
-                <span>{completed}/{total} completed</span>
-              </div>
-            </div>
+      {/* Gradient Border Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+      
+      {/* Shine Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-            {/* Progress Bar */}
-            <div className="mt-3">
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${(completed / total) * 100}%` }}
-                />
-              </div>
+      <div className="p-6 flex-1 relative z-10">
+        {/* Header with Badge */}
+        <div className="flex justify-between items-start mb-4">
+          <motion.span 
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r ${getBadgeColor(module.badge)} text-white shadow-lg flex items-center gap-1.5`}
+            whileHover={{ scale: 1.05 }}
+          >
+            {getBadgeIcon(module.badge)}
+            {module.badge}
+          </motion.span>
+          
+          {module.isNew && (
+            <span className="px-2 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full text-xs font-semibold shadow-lg">
+              NEW
+            </span>
+          )}
+        </div>
+
+        {/* Title and Description */}
+        <h3 className="font-bold text-xl mb-3 text-white group-hover:text-cyan-400 transition-colors">
+          {module.title}
+        </h3>
+        <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+          {module.description}
+        </p>
+
+        {/* Duration */}
+        <div className="flex items-center gap-2 text-sm text-cyan-400 mb-6">
+          <Clock className="w-4 h-4" />
+          <span>{module.duration}</span>
+        </div>
+
+        {/* Progress Bar */}
+        {showProgress && (
+          <div className="mb-6">
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-gray-300">Progress</span>
+              <span className="font-semibold text-cyan-400">{module.progress}%</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+              <motion.div 
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 h-2 rounded-full shadow-lg shadow-cyan-500/25"
+                initial={{ width: 0 }}
+                animate={{ width: `${module.progress}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              />
             </div>
           </div>
+        )}
 
-          {/* Right Side - Action Buttons (30%) */}
-          <div className="md:w-[30%]">
-            <div className="flex flex-col sm:flex-row md:flex-col gap-2">
-              {/* Content Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleContentClick}
-                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-                  isContentCompleted
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/30'
-                }`}
+        {/* Topics */}
+        <div className="mb-2">
+          <div className="flex flex-wrap gap-2">
+            {module.topics.slice(0, 3).map((topic, index) => (
+              <motion.span 
+                key={index}
+                className="px-3 py-1.5 bg-gray-700/50 backdrop-blur-sm text-gray-300 rounded-xl text-xs border border-gray-600 group-hover:border-cyan-500/30 transition-colors"
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(6, 182, 212, 0.1)' }}
               >
-                <BookOpen className="w-4 h-4" />
-                Content
-                {isContentCompleted && (
-                  <CheckCircle className="w-4 h-4" />
-                )}
-              </motion.button>
+                {topic}
+              </motion.span>
+            ))}
+            {module.topics.length > 3 && (
+              <span className="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-xl text-xs border border-gray-600">
+                +{module.topics.length - 3} more
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
 
-              {/* Video Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleVideoClick}
-                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-                  isVideoCompleted
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/30'
-                }`}
-              >
-                <Play className="w-4 h-4" />
-                Video
-                {isVideoCompleted && (
-                  <CheckCircle className="w-4 h-4" />
-                )}
-              </motion.button>
-
-              {/* Lab Button - Disabled for now */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleLabClick}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm bg-gray-700/50 text-gray-400 border border-gray-600 cursor-not-allowed"
-                disabled
-              >
-                <Code className="w-4 h-4" />
-                Lab
-                <span className="text-xs text-yellow-400">Soon</span>
-              </motion.button>
-            </div>
+      {/* Actions */}
+      {showActions && (
+        <div className="p-6 pt-4 bg-gray-800/30 backdrop-blur-sm border-t border-gray-700 group-hover:border-cyan-500/30 transition-colors relative z-10">
+          <div className="flex gap-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleStartLearning}
+              className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-4 rounded-xl font-semibold text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2"
+            >
+              <Play className="w-4 h-4" />
+              {module.progress > 0 ? 'Continue' : 'Start Learning'}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handlePreview}
+              className="px-4 py-3 border border-gray-600 hover:border-cyan-500 text-gray-300 hover:text-cyan-400 rounded-xl font-medium text-sm hover:bg-cyan-500/10 transition-all flex items-center gap-2"
+            >
+              <Eye className="w-4 h-4" />
+              Preview
+            </motion.button>
           </div>
         </div>
       </div>

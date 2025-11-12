@@ -5,15 +5,72 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import LabsPage from './pages/LabsPage'
+import toast from "react-hot-toast";
+import { Toaster } from 'react-hot-toast'
 import Community from './pages/Community'
 import ProtectedRoute from './components/layout/ProtectedRoute'
-import ModulePage from './pages/ModulePage'
-import ModuleContentPage from './pages/ModuleContentPage'
-import ModuleVideoPage from './pages/ModuleVideoPage'
-import CoursePage from './pages/CoursePage'
 
 export default function App() {
+   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await axios.get("http://localhost:5001/api/user/me", {
+        withCredentials: true,
+      });
+      setUser(user.data);
+    };
+
+    fetchUser();
+  }, []);
   return (
+    <>
+   
+<Toaster
+  position="top-right"
+  gutter={12}
+  toastOptions={{
+    // ✅ Base styling (fixing double toast issue)
+    style: {
+      background: "#0A0F1F",
+      color: "#56F6FF",
+      border: "1px solid rgba(0,255,255,0.35)",
+      borderRadius: "14px",
+      padding: "14px 18px",
+      boxShadow: "0 0 12px rgba(0,255,255,0.2)",
+      fontSize: "15px",
+    },
+
+    // ✅ Success Toast (Cyberpunk)
+    success: {
+      duration: 3500,
+      iconTheme: {
+        primary: "#00FFC6",
+        secondary: "#0A0F1F",
+      },
+      style: {
+        border: "1px solid rgba(0,255,198,0.35)",
+        color: "#00F5C8",
+        boxShadow: "0 0 12px rgba(0,255,198,0.25)",
+      },
+    },
+
+    // ✅ Error Toast (Cyberpunk Red)
+    error: {
+      duration: 3500,
+      iconTheme: {
+        primary: "#FF4D4D",
+        secondary: "#0A0F1F",
+      },
+      style: {
+        border: "1px solid rgba(255,77,77,0.35)",
+        color: "#FF6A6A",
+        boxShadow: "0 0 12px rgba(255,77,77,0.25)",
+      },
+    },
+  }}
+/>
+
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
@@ -23,63 +80,39 @@ export default function App() {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
+          <PrivateRoute allowedRoles={["user", "admin"]}>
+            <Dashboard  user={user}/>
+        </PrivateRoute>
         }
       />
       <Route
-        path="/courses"
+        path="/modules"
         element={
           <ProtectedRoute>
-            <CoursePage />
-          </ProtectedRoute>
-        }
-      />
-      {/* Module pages */}
-      <Route
-        path="/courses/:courseId/modules"
-        element={
-          <ProtectedRoute>
-            <ModulePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/courses/:courseId/modules/:moduleId/content"
-        element={
-          <ProtectedRoute>
-            <ModuleContentPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/courses/:courseId/modules/:moduleId/video"
-        element={
-          <ProtectedRoute>
-            <ModuleVideoPage />
+            <ModulesPage />
           </ProtectedRoute>
         }
       />
       <Route
         path="/labs"
         element={
-          <ProtectedRoute>
+        
             <LabsPage />
-          </ProtectedRoute>
+      
         }
       />
       <Route
         path="/community"
         element={
-          <ProtectedRoute>
+         
             <Community />
-          </ProtectedRoute>
+          
         }
       />
 
       {/* Redirect any unknown route to home */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
+     </>
   )
 }

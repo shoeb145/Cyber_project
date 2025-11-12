@@ -7,8 +7,9 @@ export default function Input({
   error,
   success,
   icon,
+  endAdornment, // ✅ extracted
   className = '',
-  ...props 
+  ...inputProps // ✅ only valid <input> props here
 }) {
   return (
     <motion.div
@@ -25,23 +26,21 @@ export default function Input({
         </motion.label>
       )}
       
-      <div className="relative">
+      <div className="relative flex items-center">
         {icon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             {icon}
           </div>
         )}
         
         <motion.input
-          whileFocus={{ 
-            scale: 1.02,
-            borderColor: "#22d3ee"
-          }}
+          whileFocus={{ scale: 1.02, borderColor: "#22d3ee" }}
           className={clsx(
             'w-full px-4 py-3 rounded-xl border-2 bg-gray-800/50 backdrop-blur-sm',
             'text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50',
             'transition-all duration-300',
             icon && 'pl-10',
+            endAdornment && 'pr-10',
             error 
               ? 'border-red-500/50 focus:border-red-500' 
               : success 
@@ -49,8 +48,14 @@ export default function Input({
                 : 'border-gray-600/50 focus:border-cyan-500',
             className
           )}
-          {...props}
+          {...inputProps} // ✅ safe props only
         />
+
+        {endAdornment && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-gray-400">
+            {endAdornment}
+          </div>
+        )}
       </div>
       
       {error && (
