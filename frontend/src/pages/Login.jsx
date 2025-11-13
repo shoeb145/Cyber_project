@@ -22,7 +22,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit,setValue, formState: { errors } } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: { 
       email: '', 
@@ -54,6 +54,9 @@ export default function Login() {
     } catch (error) {
       
     toast.error(error.response?.data?.message || "Something went wrong");
+    setValue("email","")
+    setValue("password","")
+    
     } finally {
       setLoading(false)
     }

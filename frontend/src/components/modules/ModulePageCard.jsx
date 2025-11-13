@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { BookOpen, Play, Code, CheckCircle, Clock } from 'lucide-react'
 
-const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
+const ModulePageCard = ({ module, courseId, onProgressUpdate ,onClick}) => {
   const navigate = useNavigate()
 
   // Safe completion check with default values
@@ -18,7 +18,8 @@ const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
   }
 
   const handleContentClick = () => {
-    navigate(`/courses/${courseId}/modules/${module.id}/content`)
+    console.log(courseId,module.id)
+    navigate(`/courses/${courseId}/${module._id}/learn`)
     // Mark as completed when user visits content
     if (onProgressUpdate) {
       onProgressUpdate(module.id, 'content', true)
@@ -51,7 +52,8 @@ const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
-      className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 overflow-hidden hover:border-cyan-500/50 transition-all duration-300"
+      onClick={onClick}
+      className="bg-gray-800/50 backdrop-blur-sm mb-4 rounded-2xl border border-gray-700 overflow-hidden hover:border-cyan-500/50 transition-all duration-300"
     >
       <div className="p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -81,14 +83,7 @@ const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
             </div>
 
             {/* Progress Bar */}
-            <div className="mt-3">
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${(completed / total) * 100}%` }}
-                />
-              </div>
-            </div>
+            
           </div>
 
           {/* Right Side - Action Buttons (30%) */}
@@ -113,7 +108,7 @@ const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
               </motion.button>
 
               {/* Video Button */}
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleVideoClick}
@@ -128,7 +123,7 @@ const ModulePageCard = ({ module, courseId, onProgressUpdate }) => {
                 {isVideoCompleted && (
                   <CheckCircle className="w-4 h-4" />
                 )}
-              </motion.button>
+              </motion.button> */}
 
               {/* Lab Button - Disabled for now */}
               <motion.button

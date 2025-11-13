@@ -29,13 +29,25 @@ function LessonPage({ user }) {
         `http://localhost:5001/api/lesson/${moduleId}/lessons`,
         { withCredentials: true }
       );
-      setModule(response.data.module);
-      console.log(response.data);
-      setLessons(response.data.lessons);
-      if (response.data.lessons) {
-        setSelectedLesson(response.data.lessons);
-      }
-    } catch (error) {
+    
+    // DEBUG: inspect response shape
+    console.log("API response:", response.data);
+
+    // Normalize lessons to always be an array
+    let lessonsData = response.data.lessons;
+    if (!lessonsData) lessonsData = [];
+    else if (!Array.isArray(lessonsData)) lessonsData = [lessonsData];
+
+    setModule(response.data.module || null);
+    setLessons(lessonsData);
+
+    // Select the first lesson if exists
+    if (lessonsData.length > 0) {
+      setSelectedLesson(lessonsData[0]);
+    } else {
+      setSelectedLesson(null);
+    }
+  }  catch (error) {
       console.error("Error fetching lessons:", error);
     } finally {
       setLoading(false);
@@ -51,6 +63,9 @@ function LessonPage({ user }) {
     setSelectedLesson(lesson);
   };
 
+useEffect(() => {
+  console.log("Lessons updated:", lessons);
+}, [lessons]);
   return (
     <div className="bg-[#0b121f] min-h-screen flex flex-col">
       <NavBar user={user} />

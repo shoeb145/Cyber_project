@@ -257,6 +257,7 @@ export default function ModulesPage({user}) {
                   >
                     <ModuleCard 
                       module={module} 
+                      
                       showProgress={true}
                       showActions={true}
                       viewMode={viewMode}

@@ -103,7 +103,7 @@ export const signIn = async (req, res, next) => {
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
-        message: "Incorrect password. Please try again.",
+        message: "Incorrect username & password. Please try again.",
       });
     }
 
