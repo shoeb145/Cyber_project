@@ -72,9 +72,10 @@ function LoginInput() {
         }
       );
 
+      console.log(response.data,"is this couse of error")
       if (response.data.success) {
-        if (roleCheck(response.data.data.user?.role))
-          navigate("/admin/dashboard");
+        if (response.data.user?.role == "admin")
+          navigate("/admin/courses");
         else navigate("/dashboard");
       }
     } catch (error) {

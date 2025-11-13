@@ -1,37 +1,10 @@
-import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios, { all } from "axios";
+import { useAuth } from "../context/AuthContext";
 
 const PrivateRoute = ({ children, allowedRoles = [] }) => {
+  const { user, loading } = useAuth();
 
-  console.log(children,allowedRoles)
-  const [auth, setAuth] = useState({
-    loading: true,
-    success: false,
-    role: null,
-  });
-
-  useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const res = await axios.get("http://localhost:5001/api/auth/verify", {
-          withCredentials: true, // send cookies if using cookie-based auth
-        });
-
-        if (res.data.success) {
-          setAuth({ loading: false, success: true, role: res.data.user.role });
-        } else {
-          setAuth({ loading: false, success: false, role: null });
-        }
-      } catch (error) {
-        setAuth({ loading: false, success: false, role: null });
-      }
-    };
-
-    verifyUser();
-  }, []);
-
-  if (auth.loading)
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#0b121f] text-white">
         <div className="flex space-x-1 mb-4">
@@ -44,16 +17,12 @@ const PrivateRoute = ({ children, allowedRoles = [] }) => {
         </p>
       </div>
     );
-
-  // 🚫 Not logged in → redirect
-  if (!auth.success) return <Navigate to="/login" />;
-
-  // 🚫 Logged in but not authorized for this route
-  if (allowedRoles.length > 0 && !allowedRoles.includes(auth.role)) {
-    return <Navigate to="/unauthorized" replace />;
   }
 
-  // ✅ Logged in and authorized
+  if (!user) return <Navigate to="/login" replace />;
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role))
+    return <Navigate to="/unauthorized" replace />;
+
   return children;
 };
 

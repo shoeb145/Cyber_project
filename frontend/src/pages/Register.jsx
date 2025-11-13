@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye,
@@ -56,6 +57,8 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
+  const { fetchUser } = useAuth();
+
 
   /* -------- Invite Form -------- */
   const {
@@ -111,11 +114,12 @@ export default function Register() {
         }
       );
 
-      if (response.data.success) {
-        toast.success("Account created successfully!");
-        setStep(3);
-        return;
-      }
+     if (response.data.success) {
+  toast.success("Account created successfully!");
+  await fetchUser(); // ✅ Update global user immediately
+  setStep(3);
+  return;
+}
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {

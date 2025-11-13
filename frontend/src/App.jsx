@@ -5,36 +5,29 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import LabsPage from "./pages/LabsPage";
-import toast from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import Community from "./pages/Community";
 import PrivateRoute from "./lib/PrivateRoute";
-import { useState, useEffect } from "react";
 import ModulesPage from "./pages/ModulePage";
 import axios from "axios";
 import Coursepage from "./pages/Coursepage";
+import { useAuth } from "./context/AuthContext";
 import ModuleContentPage from "./pages/ModuleContentPage";
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  const { loading, user } = useAuth(); // ✅ Now works fine because context is available
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await axios.get("http://localhost:5001/api/user/me", {
-        withCredentials: true,
-      });
-      setUser(user.data);
-    };
-
-    fetchUser();
-  }, []);
+  if (loading)
+    return (
+      <div className="text-white text-center mt-20">Loading...</div>
+    );
+console.log(user)
   return (
     <>
       <Toaster
         position="top-right"
         gutter={12}
         toastOptions={{
-          // ✅ Base styling (fixing double toast issue)
           style: {
             background: "#0A0F1F",
             color: "#56F6FF",
@@ -44,8 +37,6 @@ export default function App() {
             boxShadow: "0 0 12px rgba(0,255,255,0.2)",
             fontSize: "15px",
           },
-
-          // ✅ Success Toast (Cyberpunk)
           success: {
             duration: 3500,
             iconTheme: {
@@ -58,8 +49,6 @@ export default function App() {
               boxShadow: "0 0 12px rgba(0,255,198,0.25)",
             },
           },
-
-          // ✅ Error Toast (Cyberpunk Red)
           error: {
             duration: 3500,
             iconTheme: {
@@ -80,7 +69,6 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Individual Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -93,7 +81,7 @@ export default function App() {
           path="/courses/:courseId/:moduleId/learn"
           element={
             <PrivateRoute allowedRoles={["user", "admin"]}>
-             <ModuleContentPage />
+              <ModuleContentPage />
             </PrivateRoute>
           }
         />
@@ -113,13 +101,9 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        
-        
 
         <Route path="/labs" element={<LabsPage />} />
         <Route path="/community" element={<Community />} />
-
-        {/* Redirect any unknown route to home */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
