@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, CheckCircle, Download, FileText } from 'lucide-react'
+import { ArrowLeft, Check, CheckCircle, Download, FileText } from 'lucide-react'
 import Sidebar from '../components/layout/Sidebar'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -366,6 +366,56 @@ export default function ModuleContentPage() {
                       {/* {index < lessons.length - 1 && (
                         <div className="mt-16 pt-16 border-t border-gray-700/50"></div>
                       )} */}
+                       <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <Button
+            variant="secondary"
+            icon={ <Check className="w-4 h-4" />}
+           
+            onClick={goBack}
+            className="mb-4 ml-auto"
+          >
+            mark as complete
+          </Button>
+          {/* {currentModule && (
+              <div>
+                <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
+                  {currentModule.title} - Lessons
+                </h3>
+                <div className="space-y-1">
+                  <button
+                    key={lessons._id}
+                    onClick={() => scrollToLesson(lessons._id)}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-all group ${
+                      activeSection === lessons._id
+                        ? "bg-blue-600/10 border border-blue-500/30 text-white"
+                        : "text-gray-400 hover:text-white hover:bg-gray-700/20"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold ${
+                          activeSection === lessons._id
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-700 text-gray-400 group-hover:bg-gray-600"
+                        }`}
+                      >
+                        {lessons.order}
+                      </div>
+                      <span className="text-sm truncate flex-1">
+                        {lessons.title}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )} */}
+
+         
+        </motion.div>
                     </div>
                   </div>
                 ) : (

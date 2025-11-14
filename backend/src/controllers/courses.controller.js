@@ -99,7 +99,7 @@ export const updateCourse = async (req, res, next) => {
         .status(404)
         .json({ success: false, message: "Course not found" });
     }
-    console.log(updatedCourse);
+   
     res.status(200).json({
       success: true,
       message: "Course updated successfully",
@@ -109,3 +109,4 @@ export const updateCourse = async (req, res, next) => {
     res.status(404).json({ success: false, message: "Course not " });
   }
 };
+
