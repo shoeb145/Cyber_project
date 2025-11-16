@@ -123,14 +123,12 @@ export default function Dashboard({user}) {
   console.log(user)
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
-      {/* Sidebar */}
-      <div className="flex-shrink-0">
-        <Sidebar user={user} stats={stats} />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Sidebar - Now fixed overlay, not in flex layout */}
+      <Sidebar user={user} stats={stats} />
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 p-6 overflow-auto">
+      <main className="p-6 pt-[70px] overflow-auto">
         {/* Enhanced Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

@@ -136,10 +136,11 @@ export default function LabsPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Sidebar - Now fixed overlay, not in flex layout */}
       <Sidebar />
       
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="p-6 pt-[70px] overflow-auto">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

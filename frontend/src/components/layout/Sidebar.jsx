@@ -1,17 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 
-import { Shield, BookOpen, FlaskConical, Users, Trophy, Settings, LogOut, Zap, Target, Menu, X } from 'lucide-react'
+import { Shield, BookOpen, FlaskConical, Users, LogOut, Zap, Target, Menu, X } from 'lucide-react'
 import axios from 'axios'
-
 
 const Sidebar = ({ user, stats }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
+  // Lock body scroll when sidebar is open (mobile and desktop)
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY
+      // Lock body scroll
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      document.body.style.overflow = 'hidden'
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1)
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
 
   const navigationItems = [
     { icon: Shield, label: 'Dashboard', path: '/dashboard' },
@@ -32,9 +61,8 @@ const Sidebar = ({ user, stats }) => {
   }
 
   const handleNavigation = (path) => {
-    console.log(path)
     navigate(path)
-    setIsMobileOpen(false)
+    setIsOpen(false)
   }
 
   const handleLogout = async () => {
@@ -53,40 +81,49 @@ const Sidebar = ({ user, stats }) => {
     } catch (err) {
       console.error("Logout failed:", err);
     }
-
-  }
-  console.log(user)
-
-  const toggleMobileMenu = () => {
-    setIsMobileOpen(!isMobileOpen)
   }
 
-  const sidebarContent = (
-    <>
+  const toggleMenu = () => {
+    setIsOpen(!isOpen)
+  }
+
+  // Sidebar content component
+  const SidebarContent = () => (
+    <div className="relative h-full flex flex-col overflow-y-auto scrollbar-hide-desktop">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_24%,rgba(6,182,212,0.1)_25%,rgba(6,182,212,0.1)_26%,transparent_27%,transparent_74%,rgba(6,182,212,0.1)_75%,rgba(6,182,212,0.1)_76%,transparent_77%),linear-gradient(0deg,transparent_24%,rgba(6,182,212,0.1)_25%,rgba(6,182,212,0.1)_26%,transparent_27%,transparent_74%,rgba(6,182,212,0.1)_75%,rgba(6,182,212,0.1)_76%,transparent_77%)] bg-[length:40px_40px]" />
       </div>
 
       {/* Animated Background Elements */}
-      <div className="absolute top-10 right-10 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl"></div>
-      <div className="absolute bottom-20 left-10 w-16 h-16 bg-blue-500/10 rounded-full blur-lg"></div>
+      <div className="absolute top-10 right-10 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+      <div className="absolute bottom-20 left-10 w-16 h-16 bg-blue-500/10 rounded-full blur-lg pointer-events-none"></div>
 
-      <div className="relative rounded-full z-10 flex flex-col h-full">
+      {/* Close Button - Inside sidebar, top-right corner */}
+      <button
+        onClick={toggleMenu}
+        className="absolute top-3 right-3 z-20 p-1.5 bg-gray-800/90 backdrop-blur-sm border border-cyan-500/40 rounded-lg shadow-lg hover:bg-gray-700/90 hover:border-cyan-500/60 transition-all duration-200 group"
+        aria-label="Close sidebar"
+      >
+        <X className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+      </button>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col min-h-full">
         {/* User Profile Section */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="p-4 md:p-6 border-b border-cyan-500/20 bg-gradient-to-r from-cyan-500/5 to-blue-500/5"
+          className="pt-4 pb-4 px-4 md:pt-6 md:pb-6 md:px-6 border-b border-cyan-500/20 bg-gradient-to-r from-cyan-500/5 to-blue-500/5"
         >
           <div className="flex items-center gap-3 md:gap-4 mb-4">
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
               className="relative"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/25">
-              <img src={user?.avatar} alt="" srcset="" />  
+              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/25 overflow-hidden">
+                <img src={user?.avatar} alt={user?.username || 'User'} className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-green-500 border-2 border-gray-900 rounded-full"></div>
             </motion.div>
@@ -96,8 +133,7 @@ const Sidebar = ({ user, stats }) => {
                 className="font-bold text-white truncate text-base md:text-lg"
                 whileHover={{ color: "#22d3ee" }}
               >
-                {user?.
-username}
+                {user?.username}
               </motion.h3>
               <div className="flex items-center gap-2 mt-1">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -124,7 +160,7 @@ username}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className=" p-3 md:p-4"
+          className="p-3 md:p-4"
         >
           <h4 className="text-gray-400 text-sm font-semibold mb-3 px-2">NAVIGATION</h4>
           <nav className="space-y-1">
@@ -272,57 +308,53 @@ username}
             <div className="w-9 h-9 md:w-10 md:h-10 bg-red-500/20 rounded-xl flex items-center justify-center group-hover:bg-red-500/30 transition-colors">
               <LogOut className="w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <span className="font-medium" >Log Out</span>
+            <span className="font-medium">Log Out</span>
           </motion.button>
         </motion.div>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none"></div>
-    </>
+    </div>
   )
 
   return (
     <>
-      {/* Mobile Menu Button - Always visible on mobile */}
-      <button
-        onClick={toggleMobileMenu}
-        className="fixed top-4 left-4 z-50 p-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-500/20 rounded-xl shadow-lg md:hidden"
-      >
-        <Menu className="w-6 h-6 text-cyan-400" />
-      </button>
-
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block h-full">
-        <motion.div
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="w-80 bg-gradient-to-b from-gray-900 to-gray-800 border-r border-cyan-500/20 flex flex-col h-full relative overflow-hidden"
+      {/* Toggle Button - Fixed position at top-left when sidebar is closed */}
+      {!isOpen && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          onClick={toggleMenu}
+          className="fixed top-4 left-4 z-[100] p-2.5 bg-gray-900/80 backdrop-blur-md border border-cyan-500/30 rounded-xl shadow-xl hover:bg-gray-800/90 hover:border-cyan-500/50 transition-all duration-200 group"
+          aria-label="Open sidebar"
         >
-          {sidebarContent}
-        </motion.div>
-      </div>
+          <Menu className="w-6 h-6 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+        </motion.button>
+      )}
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Sidebar Overlay - Only renders when open */}
       <AnimatePresence>
-        {isMobileOpen && (
+        {isOpen && (
           <>
+            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={toggleMobileMenu}
-              className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+              onClick={toggleMenu}
+              className="fixed inset-0 bg-black bg-opacity-50 z-[90]"
             />
             
+            {/* Sidebar Panel */}
             <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -100, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed top-0 left-0 w-80 max-w-[85vw] h-screen bg-gradient-to-b from-gray-900 to-gray-800 border-r border-cyan-500/20 flex flex-col relative overflow-hidden z-50 md:hidden shadow-2xl"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-gradient-to-b from-gray-900 to-gray-800 border-r border-cyan-500/20 shadow-2xl z-[95]"
             >
-              {sidebarContent}
+              <SidebarContent />
             </motion.div>
           </>
         )}

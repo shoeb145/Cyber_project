@@ -183,11 +183,11 @@ export default function Community() {
   ]
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Desktop sidebar always shown via your Sidebar component */}
       <Sidebar />
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="p-4 md:p-6 pt-[70px] md:pt-[70px] overflow-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
