@@ -93,7 +93,7 @@ export default function ModuleVideoPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <Sidebar />
       
-      <main className="p-6 pt-[70px] overflow-auto">
+      <main className="p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
         {/* Header with Back Button */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

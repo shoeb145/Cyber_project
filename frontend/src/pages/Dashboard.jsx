@@ -128,7 +128,7 @@ export default function Dashboard({user}) {
       <Sidebar user={user} stats={stats} />
 
       {/* Main Content */}
-      <main className="p-6 pt-[70px] overflow-auto">
+      <main className="p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
         {/* Enhanced Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

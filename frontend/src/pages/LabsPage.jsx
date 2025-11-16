@@ -140,7 +140,7 @@ export default function LabsPage() {
       {/* Sidebar - Now fixed overlay, not in flex layout */}
       <Sidebar />
       
-      <main className="p-6 pt-[70px] overflow-auto">
+      <main className="p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

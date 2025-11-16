@@ -187,7 +187,7 @@ export default function Community() {
       {/* Desktop sidebar always shown via your Sidebar component */}
       <Sidebar />
 
-      <main className="p-4 md:p-6 pt-[70px] md:pt-[70px] overflow-auto">
+      <main className="p-4 md:p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}

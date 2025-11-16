@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
@@ -9,38 +9,43 @@ import axios from 'axios'
 const Sidebar = ({ user, stats }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const [isOpen, setIsOpen] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const scrollPositionRef = useRef(0)
 
-  // Lock body scroll when sidebar is open (mobile and desktop)
+  // Lock body scroll when mobile sidebar is open
   useEffect(() => {
-    if (isOpen) {
+    if (isMobileOpen) {
       // Save current scroll position
-      const scrollY = window.scrollY
+      scrollPositionRef.current = window.scrollY || window.pageYOffset || document.documentElement.scrollTop
       // Lock body scroll
       document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollY}px`
+      document.body.style.top = `-${scrollPositionRef.current}px`
       document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
     } else {
       // Restore scroll position
-      const scrollY = document.body.style.top
+      const scrollY = scrollPositionRef.current
       document.body.style.position = ''
       document.body.style.top = ''
       document.body.style.width = ''
       document.body.style.overflow = ''
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1)
-      }
+      
+      // Restore scroll position after a brief delay to ensure styles are reset
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY)
+      })
     }
 
     // Cleanup function
     return () => {
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.width = ''
-      document.body.style.overflow = ''
+      if (!isMobileOpen) {
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+      }
     }
-  }, [isOpen])
+  }, [isMobileOpen])
 
   const navigationItems = [
     { icon: Shield, label: 'Dashboard', path: '/dashboard' },
@@ -62,7 +67,7 @@ const Sidebar = ({ user, stats }) => {
 
   const handleNavigation = (path) => {
     navigate(path)
-    setIsOpen(false)
+    setIsMobileOpen(false)
   }
 
   const handleLogout = async () => {
@@ -83,12 +88,12 @@ const Sidebar = ({ user, stats }) => {
     }
   }
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen)
+  const toggleMobileMenu = () => {
+    setIsMobileOpen(!isMobileOpen)
   }
 
   // Sidebar content component
-  const SidebarContent = () => (
+  const SidebarContent = ({ showCloseButton = false }) => (
     <div className="relative h-full flex flex-col overflow-y-auto scrollbar-hide-desktop">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -99,14 +104,16 @@ const Sidebar = ({ user, stats }) => {
       <div className="absolute top-10 right-10 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
       <div className="absolute bottom-20 left-10 w-16 h-16 bg-blue-500/10 rounded-full blur-lg pointer-events-none"></div>
 
-      {/* Close Button - Inside sidebar, top-right corner */}
-      <button
-        onClick={toggleMenu}
-        className="absolute top-3 right-3 z-20 p-1.5 bg-gray-800/90 backdrop-blur-sm border border-cyan-500/40 rounded-lg shadow-lg hover:bg-gray-700/90 hover:border-cyan-500/60 transition-all duration-200 group"
-        aria-label="Close sidebar"
-      >
-        <X className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-      </button>
+      {/* Close Button - Only on mobile */}
+      {showCloseButton && (
+        <button
+          onClick={toggleMobileMenu}
+          className="absolute top-3 right-3 z-20 p-1.5 bg-gray-800/90 backdrop-blur-sm border border-cyan-500/40 rounded-lg shadow-lg hover:bg-gray-700/90 hover:border-cyan-500/60 transition-all duration-200 group md:hidden"
+          aria-label="Close sidebar"
+        >
+          <X className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+        </button>
+      )}
 
       {/* Content */}
       <div className="relative z-10 flex flex-col min-h-full">
@@ -319,31 +326,36 @@ const Sidebar = ({ user, stats }) => {
 
   return (
     <>
-      {/* Toggle Button - Fixed position at top-left when sidebar is closed */}
-      {!isOpen && (
+      {/* Mobile Toggle Button - Only visible on mobile when sidebar is closed */}
+      {!isMobileOpen && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          onClick={toggleMenu}
-          className="fixed top-4 left-4 z-[100] p-2.5 bg-gray-900/80 backdrop-blur-md border border-cyan-500/30 rounded-xl shadow-xl hover:bg-gray-800/90 hover:border-cyan-500/50 transition-all duration-200 group"
+          onClick={toggleMobileMenu}
+          className="fixed top-4 left-4 z-[100] p-2.5 bg-gray-900/80 backdrop-blur-md border border-cyan-500/30 rounded-xl shadow-xl hover:bg-gray-800/90 hover:border-cyan-500/50 transition-all duration-200 group md:hidden"
           aria-label="Open sidebar"
         >
           <Menu className="w-6 h-6 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
         </motion.button>
       )}
 
-      {/* Sidebar Overlay - Only renders when open */}
+      {/* Desktop Sidebar - Always visible, fixed to left */}
+      <div className="hidden md:block fixed top-0 left-0 h-screen w-80 bg-gradient-to-b from-gray-900 to-gray-800 border-r border-cyan-500/20 z-40">
+        <SidebarContent showCloseButton={false} />
+      </div>
+
+      {/* Mobile Sidebar Overlay - Only renders when open */}
       <AnimatePresence>
-        {isOpen && (
+        {isMobileOpen && (
           <>
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={toggleMenu}
-              className="fixed inset-0 bg-black bg-opacity-50 z-[90]"
+              onClick={toggleMobileMenu}
+              className="fixed inset-0 bg-black bg-opacity-50 z-[90] md:hidden"
             />
             
             {/* Sidebar Panel */}
@@ -352,9 +364,9 @@ const Sidebar = ({ user, stats }) => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-gradient-to-b from-gray-900 to-gray-800 border-r border-cyan-500/20 shadow-2xl z-[95]"
+              className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-gradient-to-b from-gray-900 to-gray-800 border-r border-cyan-500/20 shadow-2xl z-[95] md:hidden"
             >
-              <SidebarContent />
+              <SidebarContent showCloseButton={true} />
             </motion.div>
           </>
         )}
