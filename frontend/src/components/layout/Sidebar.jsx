@@ -54,11 +54,6 @@ const Sidebar = ({ user, stats }) => {
     { icon: Users, label: 'Community', path: '/community' },
   ]
 
-  const quickActions = [
-    { icon: Zap, label: 'Quick Lab', path: '/labs/quick' },
-    { icon: Target, label: 'Daily Challenge', path: '/challenge' }
-  ]
-
   const isActive = (path) => {
     // Check if current path starts with the navigation path
     // This handles nested routes like /courses/:courseId/modules
@@ -220,50 +215,7 @@ const Sidebar = ({ user, stats }) => {
           </nav>
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="p-3 md:p-4 border-t border-cyan-500/20"
-        >
-          <h4 className="text-gray-400 text-sm font-semibold mb-3 px-2">QUICK ACTIONS</h4>
-          <div className="space-y-1">
-            {quickActions.map((action, index) => {
-              const Icon = action.icon
-              const active = isActive(action.path)
-              
-              return (
-                <motion.button
-                  key={action.label}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  whileHover={{ x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 group relative ${
-                    active
-                      ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border-r-2 border-cyan-400 shadow-lg shadow-cyan-500/10'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
-                  }`}
-                  onClick={() => handleNavigation(action.path)}
-                >
-                  <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-colors relative z-10 ${
-                    active 
-                      ? 'bg-cyan-500/20' 
-                      : 'bg-gray-800/50 group-hover:bg-cyan-500/10'
-                  }`}>
-                    <Icon className={`w-4 h-4 md:w-5 md:h-5 ${active ? 'text-cyan-400' : 'text-gray-400 group-hover:text-cyan-400'}`} />
-                  </div>
-                  
-                  <span className={`font-medium relative z-10 text-sm md:text-base ${active ? 'text-cyan-400' : ''}`}>
-                    {action.label}
-                  </span>
-                </motion.button>
-              )
-            })}
-          </div>
-        </motion.div>
+      
 
         {/* Progress Section */}
         <motion.div
