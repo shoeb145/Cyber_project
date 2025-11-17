@@ -84,7 +84,7 @@ export default function ModulePage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <main className="flex-1 p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
+      <main className="flex-1 p-6 pt-[70px] md:pt-6 md:ml-3 overflow-auto">
         {/* Header */}
            <motion.div
                   initial={{ opacity: 0, y: -20 }}

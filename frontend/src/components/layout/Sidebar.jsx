@@ -164,7 +164,7 @@ const Sidebar = ({ user, stats }) => {
           transition={{ delay: 0.4 }}
           className="p-3 md:p-4"
         >
-          <h4 className="text-gray-400 text-sm font-semibold mb-3 px-2">NAVIGATION</h4>
+          {/* <h4 className="text-gray-400 text-sm font-semibold mb-3 px-2">NAVIGATION</h4> */}
           <nav className="space-y-1">
             {navigationItems.map((item, index) => {
               const Icon = item.icon
