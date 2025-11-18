@@ -135,6 +135,8 @@ export const signIn = async (req, res, next) => {
 
     user.lastLoginDate = now;
     await user.save();
+    console.log(process.env.JWT_EXPIRES_IN)
+    console.log(process.env.JWT_SECRET)
 
     /** ---------------- ✅ TOKEN ---------------- **/
     const token = jwt.sign(
@@ -218,5 +220,5 @@ export const signOut = async (req, res) => {
     path: "/", // 👈 This is critical
   });
   return res.status(200).json({ message: "Logged out successfully" });
-  return res.status(200).json({ message: "Logged out successfully" });
+ 
 };

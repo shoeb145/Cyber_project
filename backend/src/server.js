@@ -11,6 +11,7 @@ import coursesRoute from "./router/courses.router.js";
 import moduleRoute from "./router/module.router.js";
 import lessonRoute from "./router/lesson.router.js";
 import cors from "cors";
+import progressRoute from "./router/progress.router.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/user", authorization, userRouter);
 app.use("/api/courses", authorization, coursesRoute);
 app.use("/api/module", authorization, moduleRoute);
 app.use("/api/lesson", authorization, lessonRoute);
+app.use("/api/progress",progressRoute)
 
 app.use(errorMiddleware);
 

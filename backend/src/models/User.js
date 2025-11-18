@@ -58,23 +58,7 @@ const UserSchema = new mongoose.Schema(
       default: 30,
     },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    coursesTaken: [
-      {
-        courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Courses" },
-        completed: { type: Boolean, default: false },
-        unlocked: { type: Boolean, default: false },
-        progress: [
-          {
-            moduleId: { type: mongoose.Schema.Types.ObjectId, ref: "Module" },
-            lessonsCompleted: [
-              { type: mongoose.Schema.Types.ObjectId, ref: "Lesson" },
-            ],
-          },
-        ],
-        score: { type: Number, default: 0 },
-        completedAt: { type: Date },
-      },
-    ],
+    
     createdAt: {
       type: Date,
       default: Date.now,

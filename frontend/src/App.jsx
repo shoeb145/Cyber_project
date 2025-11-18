@@ -102,8 +102,8 @@ console.log(user)
           }
         />
 
-        <Route path="/labs" element={<LabsPage />} />
-        <Route path="/community" element={<Community />} />
+        <Route path="/labs" element={<LabsPage user={user}  />} />
+        <Route path="/community" element={<Community  user={user} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>

@@ -28,7 +28,7 @@ const featuredModules = [
   {
     id: 'm1',
     badge: 'Beginner Friendly',
-    title: 'Threat Detection Fundamentals',
+    title: 'hello',
     duration: '8–10 hours',
     description: 'Identify and analyze malware and network threats in real time — the ideal starting point for cybersecurity beginners.',
     topics: ['Malware analysis basics', 'Network monitoring', 'SIEM introduction', 'Incident reporting'],
