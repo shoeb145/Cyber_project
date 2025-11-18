@@ -17,7 +17,7 @@ import courseService from '../services/courseService'
 import { useAuthStore } from '../store/useAuthStore'
 import toast from 'react-hot-toast'
 
-export default function ModuleContentPage() {
+export default function ModuleContentPage({ user }) {
   const { courseId, moduleId } = useParams()
   const navigate = useNavigate()
   const [completedLessons, setCompletedLessons] = useState([])
@@ -69,14 +69,11 @@ export default function ModuleContentPage() {
 
   // MARK LESSON COMPLETE: calls POST /api/progress/lesson/complete
   const markLessonComplete = async (lesson) => {
-    if (!userId) {
-      navigate('/login')
-      return
-    }
+   
 
     try {
       await courseService.completeLesson({
-        userId,
+        userId:user._id,
         courseId,
         moduleId,
         lessonId: lesson._id || lesson.id,

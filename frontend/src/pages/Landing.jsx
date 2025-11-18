@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
-import ModuleCard from '../components/modules/ModuleCard'
+import ModuleCard from '../components/modules/ModuleCardBeforelogin'
 import { motion } from 'framer-motion'
 import { 
   CheckCircle, 

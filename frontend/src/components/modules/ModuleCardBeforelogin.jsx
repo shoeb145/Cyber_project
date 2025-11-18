@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Clock, Zap, TrendingUp, Play, Eye } from 'lucide-react'
 
-const ModuleCard = ({ module, showActions = true }) => {
+const ModuleCardBeforelogin = ({ module, showActions = true }) => {
   const navigate = useNavigate()
 
   const getBadgeColor = (badge) => {
@@ -130,4 +130,4 @@ const ModuleCard = ({ module, showActions = true }) => {
   )
 }
 
-export default ModuleCard
+export default ModuleCardBeforelogin
