@@ -105,7 +105,7 @@ const ModuleCard = ({ module, showActions = true }) => {
       {showActions && (
         <div className="p-6 pt-4 bg-gray-800/30 border-t border-gray-700 group-hover:border-cyan-500/30 transition-colors relative z-10">
           <div className="flex gap-3">
-            {/* <motion.button
+            <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleStartLearning}
@@ -113,7 +113,7 @@ const ModuleCard = ({ module, showActions = true }) => {
             >
               <Play className="w-4 h-4" />
               Start
-            </motion.button> */}
+            </motion.button>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
