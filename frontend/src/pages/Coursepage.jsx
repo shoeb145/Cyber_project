@@ -1,15 +1,20 @@
-import React, { useEffect, useState, useMemo } from 'react'
+// src/pages/Coursepage.jsx
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Filter, Star, Clock, Users, TrendingUp, BookOpen, Target } from 'lucide-react'
 import Sidebar from '../components/layout/Sidebar'
-import ModuleCard from '../components/modules/ModuleCard'
+import ModuleCard from '../components/modules/ModuleCardAfterlogin'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import axios from 'axios'
+import courseService from '../services/courseService'
+import { useAuthStore } from '../store/useAuthStore'
+import toast from 'react-hot-toast'
+import api from '../lib/api'
 
 /* ============================
-   Helper utility functions
+   Helper utilities (unchanged)
    ============================ */
 
 const safeString = (val) => (typeof val === 'string' ? val : '')
@@ -56,6 +61,14 @@ export default function ModulesPage({ user }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
+  // Progress-related state (single GET for user)
+  const [enrolledSet, setEnrolledSet] = useState(new Set())
+  const [loadingProgress, setLoadingProgress] = useState(false)
+
+  const authUser = useAuthStore((s) => s.user) // uses your store
+  const userId = authUser?._id || authUser?.id || null
+
+  console.log('ModulesPage render: userId=', user)
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300)
     return () => clearTimeout(t)
@@ -84,22 +97,20 @@ export default function ModulesPage({ user }) {
           const description = safeString(c?.description ?? c?.summary ?? '')
           const topics = asArrayOfStrings(c?.topics ?? c?.tags ?? c?.categories ?? c?.skillTags)
 
-          // ---- KEY CHANGE: prefer complexity field when present ----
-          // Backend examples show: complexity: "Fundamental" | "Medium" | "Hard"
-          // We normalize to the same UI labels; fallback to difficulty/badge if complexity missing.
+          // Normalize complexity/difficulty
           const complexityRaw = safeString(c?.complexity ?? c?.difficulty ?? c?.badge ?? c?.level ?? 'Fundamental').toLowerCase()
 
           const complexity =
-            complexityRaw === 'beginner' ? 'Fundamental' : // in case backend still uses these old words
+            complexityRaw === 'beginner' ? 'Fundamental' :
             complexityRaw === 'fundamental' ? 'Fundamental' :
             complexityRaw === 'intermediate' ? 'Medium' :
             complexityRaw === 'medium' ? 'Medium' :
             complexityRaw === 'advanced' ? 'Hard' :
             complexityRaw === 'hard' ? 'Hard' :
-            'Fundamental' // default
+            'Fundamental'
 
           const popularity = safeNumber(c?.popularity ?? c?.views ?? c?.likes ?? 0)
-          const progress = safeNumber(c?.progress ?? c?.userProgress ?? 0)
+          const progressVal = safeNumber(c?.progress ?? c?.userProgress ?? 0)
           const createdAt = parseDate(c?.createdAt ?? c?.publishedAt ?? c?.created_at ?? null)
           const isNewFlag = typeof c?.isNew === 'boolean' ? c.isNew : (createdAt ? isWithinDays(createdAt, 30) : false)
 
@@ -109,12 +120,11 @@ export default function ModulesPage({ user }) {
             title,
             description,
             topics,
-            // keep both fields available: complexity is authoritative; difficulty/badge kept for compatibility
             complexity,
-            difficulty: complexity, // alias for older code
-            badge: complexity, // alias for older code
+            difficulty: complexity,
+            badge: complexity,
             popularity,
-            progress,
+            progress: progressVal,
             createdAt,
             isNew: isNewFlag,
           }
@@ -133,11 +143,42 @@ export default function ModulesPage({ user }) {
     return () => { cancelled = true }
   }, [])
 
+  // Fetch user's progress once (only when userId exists)
+  useEffect(() => {
+    if (!userId) return
+    let cancelled = false
+
+    const fetchProgress = async () => {
+      setLoadingProgress(true)
+      try {
+        const data = await courseService.getUserProgress(userId)
+        // normalize: allow both array or object
+        const arr = Array.isArray(data) ? data : data ? [data] : []
+        const ids = arr.map((p) => {
+          if (!p) return null
+          if (typeof p.courseId === 'object' && p.courseId !== null) {
+            return p.courseId._id || p.courseId.id || null
+          }
+          return p.courseId || null
+        }).filter(Boolean)
+        if (!cancelled) setEnrolledSet(new Set(ids))
+      } catch (err) {
+        console.error('Error fetching user progress:', err)
+        toast.error('Could not fetch progress')
+      } finally {
+        if (!cancelled) setLoadingProgress(false)
+      }
+    }
+
+    fetchProgress()
+    return () => { cancelled = true }
+  }, [userId])
+
   /* apply filter -> sort -> search (use complexity for filter/sort) */
   const searchResults = useMemo(() => {
     const modules = Array.isArray(modulesRaw) ? modulesRaw : []
 
-    // Filter: prefer module.complexity, fallback to badge/difficulty
+    // Filter: prefer module.complexity
     const filtered = modules.filter((m) => {
       if (filter === 'All') return true
       const comp = safeString(m.complexity ?? m.badge ?? m.difficulty ?? '')
@@ -161,7 +202,6 @@ export default function ModulesPage({ user }) {
         }
 
         case 'Difficulty': {
-          // use complexity order: Fundamental -> Medium -> Hard
           const difficultyOrder = { fundamental: 1, medium: 2, hard: 3 }
           return (difficultyOrder[aComp.toLowerCase()] || 99) - (difficultyOrder[bComp.toLowerCase()] || 99)
         }
@@ -174,7 +214,6 @@ export default function ModulesPage({ user }) {
       }
     })
 
-    // Search on title, description, topics
     const q = debouncedSearch?.toLowerCase?.() ?? ''
     if (!q) return sorted
 
@@ -197,9 +236,139 @@ export default function ModulesPage({ user }) {
     { label: 'Hours Learned', value: '42', icon: Clock, color: 'purple' }
   ]
 
-  // filters now show the labels you want
   const filters = ['All', 'Fundamental', 'Medium', 'Hard']
   const sortOptions = ['Popular', 'Newest', 'Difficulty', 'Progress']
+
+  // Helper: check enrollment for a courseId (note: course objects use .id)
+  const isCourseEnrolled = useCallback((courseId) => {
+    return enrolledSet.has(courseId)
+  }, [enrolledSet])
+
+  // Parent handler for start button (enroll once then navigate)
+  const handleStart = useCallback(async (module) => {
+  const id = module.id || module._id || module.courseId
+
+  // 1) Prefer page-level user prop (you pass `user` into ModulesPage)
+  let userIdLocal = null
+  try {
+    if (user && (user._id || user.id)) {
+      userIdLocal = user._id || user.id
+      console.log('handleStart: using page prop userId=', userIdLocal)
+    }
+  } catch {}
+
+  // 2) Fallback: hook from Zustand (if it returns something)
+  try {
+    if (!userIdLocal) {
+      const authFromHook = useAuthStore ? useAuthStore((s) => s.user) : null
+      if (authFromHook && (authFromHook._id || authFromHook.id)) {
+        userIdLocal = authFromHook._id || authFromHook.id
+        console.log('handleStart: using useAuthStore hook userId=', userIdLocal)
+      }
+    }
+  } catch (e) {
+    console.warn('handleStart: useAuthStore hook check failed', e)
+  }
+
+  // 3) Fallback: sync store getState (if available)
+  try {
+    if (!userIdLocal && useAuthStore && typeof useAuthStore.getState === 'function') {
+      const stateUser = useAuthStore.getState().user
+      if (stateUser && (stateUser._id || stateUser.id)) {
+        userIdLocal = stateUser._id || stateUser.id
+        console.log('handleStart: using useAuthStore.getState userId=', userIdLocal)
+      }
+    }
+  } catch (e) {
+    console.warn('handleStart: useAuthStore.getState check failed', e)
+  }
+
+  // 4) Fallback: localStorage 'user'
+  if (!userIdLocal) {
+    try {
+      const raw = localStorage.getItem('user')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (parsed && (parsed._id || parsed.id)) {
+          userIdLocal = parsed._id || parsed.id
+          console.log('handleStart: using localStorage userId=', userIdLocal)
+        }
+      }
+    } catch (e) {
+      console.warn('handleStart: parse localStorage user failed', e)
+    }
+  }
+
+  // 5) Fallback: token -> try /me endpoints (lib/api attaches token)
+  if (!userIdLocal) {
+    const token =
+      localStorage.getItem('clp_token') ||
+      localStorage.getItem('token') ||
+      localStorage.getItem('authToken') ||
+      null
+
+    if (token) {
+      console.log('handleStart: token found, attempting /me lookup')
+      try {
+        const tryEndpoints = ['/api/auth/me', '/api/users/me', '/auth/me', '/users/me']
+        for (const ep of tryEndpoints) {
+          try {
+            const res = await api.get(ep).catch(() => null)
+            if (res && res.data) {
+              const u = res.data.user ?? res.data
+              const gotId = u?._id || u?.id || null
+              if (gotId) {
+                userIdLocal = gotId
+                try { localStorage.setItem('user', JSON.stringify(u)) } catch {}
+                console.log('handleStart: fetched user from', ep, 'userId=', userIdLocal)
+                break
+              }
+            }
+          } catch (innerErr) {
+            // ignore and continue
+          }
+        }
+      } catch (err) {
+        console.warn('handleStart: error during /me lookup', err)
+      }
+    } else {
+      console.log('handleStart: no token in localStorage')
+    }
+  }
+
+  // Final check
+  if (!userIdLocal) {
+    console.log('handleStart: no userId found -> redirect to login')
+    const returnTo = encodeURIComponent(window.location.pathname)
+    window.location.href = `/login?returnTo=${returnTo}`
+    return
+  }
+
+  // Proceed to enroll / navigate
+  try {
+    if (enrolledSet.has(id)) {
+      console.log('handleStart: already enrolled -> navigate to course', id)
+      window.location.href = `/courses/${id}`
+      return
+    }
+
+    console.log('handleStart: enrolling userId=', userIdLocal, 'courseId=', id)
+    await courseService.enrollCourse({ userId: userIdLocal, courseId: id })
+
+    setEnrolledSet((prev) => {
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
+    toast.success('Enrolled successfully')
+    window.location.href = `/courses/${id}`
+  } catch (err) {
+    console.error('handleStart: enroll error', err)
+    const message = err?.response?.data?.message || err?.message || 'Could not enroll'
+    toast.error(String(message))
+  }
+}, [enrolledSet, user, useAuthStore])
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -298,8 +467,16 @@ export default function ModulesPage({ user }) {
             ) : searchResults.length > 0 ? (
               <motion.div key={viewMode} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-4"}>
                 {searchResults.map((module, index) => (
-                  <motion.div key={module.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }} layout>
-                    <ModuleCard module={module} showProgress={true} showActions={true} viewMode={viewMode} />
+                  <motion.div key={module.id || module._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }} layout>
+                    <ModuleCard
+                      module={module}
+                      showProgress={true}
+                      showActions={true}
+                      viewMode={viewMode}
+                      isEnrolled={isCourseEnrolled(module.id || module._id)}
+                      onStart={handleStart}
+                      userId={user._id}
+                    />
                   </motion.div>
                 ))}
               </motion.div>
