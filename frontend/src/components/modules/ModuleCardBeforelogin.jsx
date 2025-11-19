@@ -1,4 +1,4 @@
-// src/components/modules/ModuleCard.jsx
+
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -105,15 +105,7 @@ const ModuleCardBeforelogin = ({ module, showActions = true }) => {
       {showActions && (
         <div className="p-6 pt-4 bg-gray-800/30 border-t border-gray-700 group-hover:border-cyan-500/30 transition-colors relative z-10">
           <div className="flex gap-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleStartLearning}
-              className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-4 rounded-xl font-semibold text-sm shadow-lg flex items-center justify-center gap-2"
-            >
-              <Play className="w-4 h-4" />
-              Start
-            </motion.button>
+            
 
             <motion.button
               whileHover={{ scale: 1.02 }}

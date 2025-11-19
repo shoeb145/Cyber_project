@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
-import ModuleCard from '../components/modules/ModuleCardBeforelogin'
+import ModuleCardBeforelogin from '../components/modules/ModuleCardBeforelogin'
 import { motion } from 'framer-motion'
 import { 
   CheckCircle, 
@@ -821,7 +821,7 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <ModuleCard module={m} />
+                  <ModuleCardBeforelogin module={m} />
                 </motion.div>
               ))}
             </div>
