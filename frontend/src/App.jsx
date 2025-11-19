@@ -14,6 +14,7 @@ import Coursepage from "./pages/Coursepage";
 import { useAuth } from "./context/AuthContext";
 import ModuleContentPage from "./pages/ModuleContentPage";
 import PublicRoute from "./lib/PublicRoute";
+import ModuleVideoPage from "./pages/ModuleVideoPage";
 export default function App() {
   const { loading, user } = useAuth(); // ✅ Now works fine because context is available
 
@@ -78,6 +79,14 @@ console.log(user)
           }
         />
         <Route
+          path="/courses/:courseId/modules/:moduleId/video"
+          element={
+            
+              <ModuleVideoPage user={user} />
+            
+          }
+        />
+        <Route
           path="/courses/:courseId/:moduleId/learn"
           element={
             <PrivateRoute allowedRoles={["user", "admin"]}>
@@ -85,6 +94,7 @@ console.log(user)
             </PrivateRoute>
           }
         />
+        
         <Route
           path="/courses"
           element={

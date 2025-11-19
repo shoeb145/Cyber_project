@@ -155,10 +155,11 @@ export default function ModulePage() {
             <h2 className="text-2xl font-bold text-white mb-6">
               Course Modules
             </h2>
-            {modules.map((module) => (
+            {modules.map((module,idx) => (
              
               <ModulePageCard
                 key={module._id}
+                 number={idx}
                 module={module}
                 courseId={id}
                 onProgressUpdate={() => fetchCourseAndModules()}

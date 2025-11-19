@@ -7,12 +7,10 @@ import Sidebar from '../components/layout/Sidebar'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import axios from 'axios'
-
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-
 import courseService from '../services/courseService'
 import { useAuthStore } from '../store/useAuthStore'
 import toast from 'react-hot-toast'
@@ -377,7 +375,11 @@ export default function ModuleContentPage({ user }) {
                   <Button
                     variant="secondary"
                     className="w-full justify-start"
-                    onClick={() => navigate(`/courses/${courseId}/modules/${moduleId}/video`)}
+                    onClick={() => {
+                       
+                      navigate(`/courses/${courseId}/modules/${moduleId}/video`,{state:lessons.title})
+                     
+                    }}
                   >
                     Watch Video Lesson
                   </Button>

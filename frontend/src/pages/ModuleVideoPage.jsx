@@ -10,7 +10,7 @@ import Button from '../components/ui/Button'
 import courseService from '../services/courseService'
 import { useAuthStore } from '../store/useAuthStore'
 import toast from 'react-hot-toast'
-
+import { useLocation } from 'react-router-dom'
 export default function ModuleVideoPage() {
   const { courseId, moduleId } = useParams()
   const navigate = useNavigate()
@@ -21,6 +21,10 @@ export default function ModuleVideoPage() {
   const [isMuted, setIsMuted] = useState(false)
   const [hasCompleted, setHasCompleted] = useState(false)
   const videoRef = useRef(null)
+  const location = useLocation()
+
+  const title = location.state
+
 
   const authUser = useAuthStore((s) => s.user)
   const userId = authUser?._id || authUser?.id || null
@@ -89,7 +93,7 @@ export default function ModuleVideoPage() {
   }
 
   const goBack = () => {
-    navigate(`/courses/${courseId}/modules`)
+    navigate(`/courses/${courseId}/${moduleId}/learn`)
   }
 
   // When video has completed (setHasCompleted true), call API once
@@ -125,9 +129,9 @@ export default function ModuleVideoPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <Sidebar />
+   
 
-      <main className="p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
+      <main className="p-6 pt-[70px] md:pt-6 md:mx-9 overflow-auto">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <Button variant="secondary" icon={<ArrowLeft className="w-4 h-4" />} onClick={goBack} className="mb-4">
             Back to Modules
@@ -135,8 +139,8 @@ export default function ModuleVideoPage() {
 
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">{moduleData.title}</h1>
-              <p className="text-gray-400 text-lg">{moduleData.description}</p>
+              <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
+              {/* <p className="text-gray-400 text-lg">{moduleData.description}</p> */}
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-300 bg-gray-800/50 px-3 py-2 rounded-lg">
               {hasCompleted && <CheckCircle className="w-4 h-4 text-green-400" />}
