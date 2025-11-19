@@ -33,22 +33,7 @@ const featuredModules = [
     description: 'Identify and analyze malware and network threats in real time — the ideal starting point for cybersecurity beginners.',
     topics: ['Malware analysis basics', 'Network monitoring', 'SIEM introduction', 'Incident reporting'],
   },
-  {
-    id: 'm2',
-    badge: 'Most Popular',
-    title: 'Web Application Security',
-    duration: '12–16 hours',
-    description: 'Hands-on web app security: OWASP Top 10, Burp Suite practice, SQLi & XSS exploitation and defense.',
-    topics: ['OWASP Top 10', 'Burp Suite', 'SQL Injection', 'Cross Site Scripting'],
-  },
-  {
-    id: 'm3',
-    badge: 'Career Track',
-    title: 'Network Defense & SOC Ops',
-    duration: '10–14 hours',
-    description: 'Run a SOC workflow: configure firewalls, detect intrusions, and harden networks under attack.',
-    topics: ['Firewall setup', 'IDS/IPS', 'Network forensics', 'Incident response'],
-  },
+  
 ]
 
 // Benefits data for integrated ModuleBenefits section
@@ -813,7 +798,7 @@ export default function Landing() {
             >
               Modules
             </motion.h3>
-            <div className="mt-6 grid md:grid-cols-3 gap-6">
+            <div className="mt-6  gap-6">
               {featuredModules.map((m, index) => (
                 <motion.div
                   key={m.id}
