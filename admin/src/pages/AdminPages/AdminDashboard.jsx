@@ -39,7 +39,7 @@ function AdminDashboard({ user }) {
   };
 
   return (
-    <div className="bg-[#0b121f] min-h-screen">
+    <div className="bg-[#0b121f] min-h-screen ">
       <NavBar user={user} />
 
       {/* Course List */}

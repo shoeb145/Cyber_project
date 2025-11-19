@@ -3,8 +3,9 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Clock, Zap, TrendingUp, Play, Eye } from 'lucide-react'
+import axios from 'axios'
 
-const ModuleCard = ({ module, showActions = true }) => {
+const ModuleCard = ({ module, showActions = true ,userId }) => {
   const navigate = useNavigate()
 
   const getBadgeColor = (badge) => {
@@ -33,11 +34,19 @@ const ModuleCard = ({ module, showActions = true }) => {
     }
   }
 
-  const handleStartLearning = () => {
+  const handleStartLearning = async () => {
+    try {
+      const res = await axios.post("http://localhost:5001/api/progress/course/enroll",{
+        userId,
+  courseId: module._id
+      })
+    } catch (error) {
+      
+    }
     console.log(module._id)
     navigate(`/courses/${module._id}`)
   }
-console.log(module)
+
   return (
     <motion.div
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
@@ -49,7 +58,7 @@ console.log(module)
 
       {/* ✅ IMAGE SECTION */}
       {module.image && (
-        <div className="w-full h-40 overflow-hidden">
+        <div className="w-full h-52 overflow-hidden">
           <img
             src={module.image}
             alt={module.title}

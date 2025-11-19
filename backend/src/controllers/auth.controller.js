@@ -40,7 +40,7 @@ if (password.length < 6) {
           fullName,
           email,
           password: hashPassword,
-          avatar: "https://avatar.iran.liara.run/public/boy",
+          avatar: `https://robohash.org/${username}.png`,
            lastLoginDate: new Date(),    // ✅ first login now
       currentStreak: 1,             // ✅ start streak
       maxStreak: 1,       

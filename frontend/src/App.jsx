@@ -13,7 +13,7 @@ import axios from "axios";
 import Coursepage from "./pages/Coursepage";
 import { useAuth } from "./context/AuthContext";
 import ModuleContentPage from "./pages/ModuleContentPage";
-
+import PublicRoute from "./lib/PublicRoute";
 export default function App() {
   const { loading, user } = useAuth(); // ✅ Now works fine because context is available
 
@@ -66,8 +66,8 @@ console.log(user)
 
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
 
         <Route
           path="/dashboard"

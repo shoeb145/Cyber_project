@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../context/AuthContext';
+
 
 import { Shield, BookOpen, FlaskConical, Users, LogOut, Zap, Target, Menu, X } from 'lucide-react'
 import axios from 'axios'
@@ -11,6 +13,7 @@ const Sidebar = ({ user, stats }) => {
   const location = useLocation()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const scrollPositionRef = useRef(0)
+const { setUser } = useAuth();
 
   // Lock body scroll when mobile sidebar is open
   useEffect(() => {
@@ -73,6 +76,7 @@ const Sidebar = ({ user, stats }) => {
         { withCredentials: true }
       );
       // Clear user data
+      setUser(null)
         toast.success("🔐 You are securely logged out.");
 
       navigate("/login");

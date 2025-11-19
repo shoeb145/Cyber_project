@@ -134,7 +134,7 @@ function CourseList({ data, handleDelete }) {
 
           {/* Course Image */}
           <div
-            className="relative h-48 overflow-hidden"
+            className="relative h-52 overflow-hidden"
             onClick={() => navigate(`/admin/courses/${course._id}/modules`)}
           >
             <img

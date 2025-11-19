@@ -192,12 +192,16 @@ export default function ModuleContentPage() {
           </div>
         </div>
       ) : (
+        <div className='overflow-x-auto overflow-y-hidden scrollbar-hide-desktop '>
+
+       
         <code
           className="px-2 py-1 bg-gray-800/70 text-blue-400 rounded-md text-sm font-mono border border-gray-700 whitespace-nowrap"
           {...props}
         >
           {children}
         </code>
+         </div>
       );
     },
     blockquote: ({ node, ...props }) => (
@@ -259,7 +263,7 @@ export default function ModuleContentPage() {
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       
       
-      <main className="flex-1 p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
+      <main className="flex-1 p-6 pt-[70px] md:pt-6 md:mx-16 overflow-auto scrollbar-hide-desktop overflow-y-hidden">
         {/* Header with Back Button */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
