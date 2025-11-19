@@ -1,3 +1,4 @@
+// ModulePage.jsx - Enhanced version
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -16,6 +17,7 @@ export default function ModulePage() {
   const [modules, setModules] = useState([]);
   const [progress, setProgress] = useState({ completed: 0, total: 0 });
   const [loading, setLoading] = useState(false);
+  const [nextModule, setNextModule] = useState(null);
 
   // ✅ Fetch course + modules when id changes
   useEffect(() => {
@@ -30,7 +32,6 @@ export default function ModulePage() {
         { withCredentials: true }
       );
 
-      // Assuming backend returns { course, modules }
       setCourse(response.data.course);
       const fetchedModules = response.data.modules || [];
 
@@ -48,11 +49,24 @@ export default function ModulePage() {
       ).length;
 
       setProgress({ completed, total: formattedModules.length });
+
+      // ✅ Find next module for "Continue Learning"
+      findNextModule(formattedModules);
     } catch (error) {
       console.error("Error fetching modules:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const findNextModule = (moduleList) => {
+    // Find first incomplete module
+    const nextModule = moduleList.find(module => {
+      const { completion } = module;
+      return !completion?.content || !completion?.video || !completion?.lab;
+    });
+    
+    setNextModule(nextModule || null);
   };
 
   const handleStartCourse = () => {
@@ -63,8 +77,13 @@ export default function ModulePage() {
   };
 
   const handleModuleClick = (module) => {
-   
     navigate(`/courses/${id}/${module._id}/learn`);
+  };
+
+  const handleContinueLearning = () => {
+    if (nextModule) {
+      navigate(`/courses/${id}/${nextModule._id}/learn`);
+    }
   };
 
   if (loading || !course) {
@@ -77,31 +96,29 @@ export default function ModulePage() {
     );
   }
 
-  const goBack = ()=>{
+  const goBack = () => {
     navigate(`/courses`);
-
-  }
+  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <main className="flex-1 p-6 pt-[70px] md:pt-6 md:mx-16 overflow-auto">
         {/* Header */}
-           <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-8"
-                >
-                  <Button
-                    variant="secondary"
-                    icon={<ArrowLeft className="w-4 h-4" />}
-                    onClick={goBack}
-                    className="mb-4"
-                  >
-                    Back to Courses
-                  </Button>
-        
-                 
-                </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <Button
+            variant="secondary"
+            icon={<ArrowLeft className="w-4 h-4" />}
+            onClick={goBack}
+            className="mb-4"
+          >
+            Back to Courses
+          </Button>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -149,24 +166,59 @@ export default function ModulePage() {
           </div>
         </motion.div>
 
+        {/* Continue Learning Section */}
+        {nextModule && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold text-white">Continue Learning</h2>
+              <p className="text-gray-400">Pick up where you left off</p>
+            </div>
+            <div 
+              onClick={handleContinueLearning}
+              className="cursor-pointer"
+            >
+              <ModulePageCard
+                number={modules.findIndex(m => m._id === nextModule._id)}
+                module={nextModule}
+                courseId={id}
+                onProgressUpdate={() => fetchCourseAndModules()}
+                onClick={() => handleModuleClick(nextModule)}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {/* Course Complete Message */}
+        {progress.completed === progress.total && progress.total > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8 p-6 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-2xl text-center"
+          >
+            <h3 className="text-2xl font-bold text-white mb-2">🎉 Course Complete!</h3>
+            <p className="text-gray-300">You've completed all modules in this course.</p>
+          </motion.div>
+        )}
+
         {/* Main Content */}
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1 lg:w-2/3">
             <h2 className="text-2xl font-bold text-white mb-6">
               Course Modules
             </h2>
-            {modules.map((module,idx) => (
-             
+            {modules.map((module, idx) => (
               <ModulePageCard
                 key={module._id}
-                 number={idx}
+                number={idx}
                 module={module}
                 courseId={id}
                 onProgressUpdate={() => fetchCourseAndModules()}
                 onClick={() => handleModuleClick(module)}
-                
               />
-          
             ))}
           </div>
 

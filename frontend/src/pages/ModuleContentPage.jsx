@@ -1,8 +1,8 @@
-// src/pages/ModuleContentPage.jsx
-import React, { useState ,useEffect} from 'react'
+// ModuleContentPage.jsx - Fixed version with complete markdownComponents
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Check, CheckCircle, Download, FileText } from 'lucide-react'
+import { ArrowLeft, Check, CheckCircle, Download, FileText, X } from 'lucide-react'
 import Sidebar from '../components/layout/Sidebar'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -24,14 +24,16 @@ export default function ModuleContentPage({ user }) {
   const [currentModule, setCurrentModule] = useState(null)
   const [lessons, setLessons] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [activeSection, setActiveSection] = useState(null)
+  const [showCompletionModal, setShowCompletionModal] = useState(false)
+  const [isFinalModule, setIsFinalModule] = useState(false)
 
   const authUser = useAuthStore((s) => s.user)
   const userId = authUser?._id || authUser?.id || null
 
   useEffect(() => {
     fetchCurrentModuleData()
-  }, [moduleId])
+    fetchAllModules()
+  }, [moduleId, courseId])
 
   const fetchCurrentModuleData = async () => {
     try {
@@ -46,6 +48,23 @@ export default function ModuleContentPage({ user }) {
       console.error("Error fetching lessons:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchAllModules = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/api/module/${courseId}/modules`,
+        { withCredentials: true }
+      )
+      const modules = response.data.modules || []
+      setAllModules(modules)
+      
+      // Check if current module is the last one
+      const currentIndex = modules.findIndex(m => m._id === moduleId)
+      setIsFinalModule(currentIndex === modules.length - 1)
+    } catch (error) {
+      console.error("Error fetching all modules:", error)
     }
   }
 
@@ -65,21 +84,30 @@ export default function ModuleContentPage({ user }) {
     navigate(`/courses/${courseId}`)
   }
 
-  // MARK LESSON COMPLETE: calls POST /api/progress/lesson/complete
+  // Enhanced mark as complete with navigation
   const markLessonComplete = async (lesson) => {
-   
-
     try {
       await courseService.completeLesson({
-        userId:user._id,
+        userId: user._id,
         courseId,
         moduleId,
         lessonId: lesson._id || lesson.id,
       })
-      // update UI locally
+      
       setCompletedLessons(prev => (prev.includes(lesson._id || lesson.id) ? prev : [...prev, lesson._id || lesson.id]))
       toast.success('Lesson marked complete')
-      // Optionally: refetch progress in parent or update sidebar
+
+      // Navigate to next module or show completion modal
+      const currentIndex = allModules.findIndex(m => m._id === moduleId)
+      
+      if (currentIndex < allModules.length - 1) {
+        // Navigate to next module
+        const nextModule = allModules[currentIndex + 1]
+        navigate(`/courses/${courseId}/${nextModule._id}/learn`)
+      } else {
+        // Show completion modal for final module
+        setShowCompletionModal(true)
+      }
     } catch (err) {
       console.error('completeLesson error', err)
       const message = err?.response?.data?.message || err.message || 'Could not mark lesson complete'
@@ -87,10 +115,13 @@ export default function ModuleContentPage({ user }) {
     }
   }
 
+  const handleModalClose = () => {
+    setShowCompletionModal(false)
+    navigate(`/courses/${courseId}`) // Return to module page
+  }
+
+  // Complete markdownComponents object
   const markdownComponents = {
-    // ... (keep the same markdown components you already have)
-    // I leave them unchanged to avoid verbosity in this response.
-    // Copy the same markdownComponents from your original file here (unchanged).
     h1: ({ node, ...props }) => (
       <div className="relative mb-8 mt-12 first:mt-0">
         <div className="absolute -left-8 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
@@ -202,15 +233,13 @@ export default function ModuleContentPage({ user }) {
         </div>
       ) : (
         <div className='overflow-x-auto overflow-y-hidden scrollbar-hide-desktop '>
-
-       
-        <code
-          className="px-2 py-1 bg-gray-800/70 text-blue-400 rounded-md text-sm font-mono border border-gray-700 whitespace-nowrap"
-          {...props}
-        >
-          {children}
-        </code>
-         </div>
+          <code
+            className="px-2 py-1 bg-gray-800/70 text-blue-400 rounded-md text-sm font-mono border border-gray-700 whitespace-nowrap"
+            {...props}
+          >
+            {children}
+          </code>
+        </div>
       );
     },
     blockquote: ({ node, ...props }) => (
@@ -268,13 +297,102 @@ export default function ModuleContentPage({ user }) {
     ),
   }
 
+  // Module Navigation Sidebar Component
+  const ModuleNavigationSidebar = () => (
+    <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
+      <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
+        <h3 className="text-lg font-semibold text-white mb-4">Course Modules</h3>
+        <div className="space-y-2">
+          {allModules.map((module, index) => {
+            const isCompleted = module.completion?.content && module.completion?.video && module.completion?.lab
+            const isActive = module._id === moduleId
+            
+            return (
+              <button
+                key={module._id}
+                onClick={() => navigate(`/courses/${courseId}/${module._id}/learn`)}
+                className={`w-full text-left p-3 rounded-lg transition-all ${
+                  isActive 
+                    ? 'bg-cyan-500/20 border border-cyan-500/30 text-white' 
+                    : 'hover:bg-gray-700/50 text-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                      isActive ? 'bg-cyan-500 text-white' : 'bg-gray-600 text-gray-300'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <span className="truncate flex-1">{module.title}</span>
+                  </div>
+                  {isCompleted && (
+                    <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                  )}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </Card>
+    </div>
+  )
+
+  // Course Completion Modal
+  const CourseCompletionModal = () => (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-gray-800 rounded-2xl border border-gray-700 max-w-md w-full p-6"
+      >
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Check className="w-8 h-8 text-white" />
+          </div>
+          
+          <h3 className="text-2xl font-bold text-white mb-2">
+            Congratulations! 🎉
+          </h3>
+          
+          <p className="text-gray-300 mb-2">
+            You've successfully completed the course
+          </p>
+          
+          {course && (
+            <p className="text-cyan-400 font-semibold mb-6">
+              {course.title}
+            </p>
+          )}
+          
+          <div className="flex flex-col gap-3">
+            <Button
+              onClick={handleModalClose}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+            >
+              Back to Course Page
+            </Button>
+            
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => {
+                // Add certificate functionality here
+                toast.success('Certificate feature coming soon!')
+              }}
+            >
+              View Certificate
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  )
+
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      
-      
       <main className="flex-1 p-6 pt-[70px] md:pt-6 md:mx-16 overflow-auto scrollbar-hide-desktop overflow-y-hidden">
         {/* Header with Back Button */}
-   
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -291,7 +409,13 @@ export default function ModuleContentPage({ user }) {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 lg:w-2/3">
+          {/* Module Navigation Sidebar */}
+          <div className="lg:w-1/4">
+            <ModuleNavigationSidebar />
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 lg:w-3/4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -305,7 +429,7 @@ export default function ModuleContentPage({ user }) {
                     className="scroll-mt-24 border-gray-700"
                   >
                     <div className="mb-8">
-                      <div className="flex items-center gap-4 mb-4 " >
+                      <div className="flex items-center gap-4 mb-4">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
                           <span className="text-white font-bold text-lg">
                             {lessons.order}
@@ -324,10 +448,10 @@ export default function ModuleContentPage({ user }) {
                           </p>
                         </div>
                       </div>
-                      <div className="h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-transparent rounded-full "></div>
+                      <div className="h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-transparent rounded-full"></div>
                     </div>
 
-                    <div className="prose prose-invert prose-blue prose-lg max-w-none  border-gray-700">
+                    <div className="prose prose-invert prose-blue prose-lg max-w-none border-gray-700">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={markdownComponents}
@@ -339,15 +463,15 @@ export default function ModuleContentPage({ user }) {
                     <motion.div
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mb-8"
+                      className="mt-8 flex justify-end"
                     >
                       <Button
-                        variant="secondary"
-                        icon={ <Check className="w-4 h-4" />}
+                        variant="primary"
+                        icon={<Check className="w-4 h-4" />}
                         onClick={() => markLessonComplete(lessons)}
-                        className="mb-4 ml-auto"
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                       >
-                        mark as complete
+                        Mark as Complete
                       </Button>
                     </motion.div>
                   </div>
@@ -361,40 +485,10 @@ export default function ModuleContentPage({ user }) {
               )}
             </motion.div>
           </div>
-
-          {/* Sidebar */}
-          <div className="lg:w-1/3 flex-shrink-0">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
-                <h3 className="text-lg font-semibold text-white mb-4">Continue Learning</h3>
-                <div className="space-y-2">
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={() => {
-                       
-                      navigate(`/courses/${courseId}/modules/${moduleId}/video`,{state:lessons.title})
-                     
-                    }}
-                  >
-                    Watch Video Lesson
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={goBack}
-                  >
-                    Back to Module List
-                  </Button>
-                </div>
-              </Card>
-            </motion.div>
-          </div>
         </div>
+
+        {/* Course Completion Modal */}
+        {showCompletionModal && <CourseCompletionModal />}
       </main>
     </div>
   )
