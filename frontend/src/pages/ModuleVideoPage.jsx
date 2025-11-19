@@ -1,3 +1,4 @@
+// src/pages/ModuleVideoPage.jsx
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -5,6 +6,10 @@ import { ArrowLeft, Play, Pause, Volume2, VolumeX, CheckCircle } from 'lucide-re
 import Sidebar from '../components/layout/Sidebar'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
+
+import courseService from '../services/courseService'
+import { useAuthStore } from '../store/useAuthStore'
+import toast from 'react-hot-toast'
 
 export default function ModuleVideoPage() {
   const { courseId, moduleId } = useParams()
@@ -17,13 +22,16 @@ export default function ModuleVideoPage() {
   const [hasCompleted, setHasCompleted] = useState(false)
   const videoRef = useRef(null)
 
-  // TODO: fetch from GET /api/courses/${courseId}/modules/${moduleId}/video
+  const authUser = useAuthStore((s) => s.user)
+  const userId = authUser?._id || authUser?.id || null
+
+  // Placeholder moduleData
   const moduleData = {
     id: moduleId,
     title: moduleId === 'foundation' ? 'Foundation - Threat Detection Fundamentals' : `${moduleId} - Video`,
     description: 'Introduction to threat detection concepts and tools',
     video: {
-      url: '/demo-videos/foundation.mp4', // Placeholder
+      url: '/demo-videos/foundation.mp4',
       duration: '15:30',
       transcript: `0:00 - Introduction to threat detection
 2:15 - Understanding attack vectors and threat actors
@@ -35,7 +43,6 @@ export default function ModuleVideoPage() {
     }
   }
 
-  // Load progress from localStorage
   useEffect(() => {
     const savedProgress = localStorage.getItem(`video-${moduleId}-progress`)
     if (savedProgress) {
@@ -57,14 +64,10 @@ export default function ModuleVideoPage() {
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       const current = videoRef.current.currentTime
-      const total = videoRef.current.duration
+      const total = videoRef.current.duration || 1
       setCurrentTime(current)
       setProgress((current / total) * 100)
-      
-      // Save progress to localStorage
       localStorage.setItem(`video-${moduleId}-progress`, (current / total).toString())
-      
-      // Mark as completed if watched 95% of the video
       if (current / total > 0.95 && !hasCompleted) {
         setHasCompleted(true)
       }
@@ -89,23 +92,44 @@ export default function ModuleVideoPage() {
     navigate(`/courses/${courseId}/modules`)
   }
 
+  // When video has completed (setHasCompleted true), call API once
+  useEffect(() => {
+    if (!hasCompleted) return
+    let cancelled = false
+    const complete = async () => {
+      if (!userId) {
+        // not logged in
+        return
+      }
+      try {
+        await courseService.completeLesson({
+          userId,
+          courseId,
+          moduleId,
+          lessonId: moduleId, // if you have separate lesson id, replace this
+        })
+        if (!cancelled) {
+          toast.success('Marked lesson complete')
+        }
+      } catch (err) {
+        console.error('Error marking video complete:', err)
+        if (!cancelled) {
+          const message = err?.response?.data?.message || err.message || 'Could not mark complete'
+          toast.error(String(message))
+        }
+      }
+    }
+    complete()
+    return () => { cancelled = true }
+  }, [hasCompleted, userId, courseId, moduleId])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <Sidebar />
-      
+
       <main className="p-6 pt-[70px] md:pt-6 md:ml-80 overflow-auto">
-        {/* Header with Back Button */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <Button
-            variant="secondary"
-            icon={<ArrowLeft className="w-4 h-4" />}
-            onClick={goBack}
-            className="mb-4"
-          >
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <Button variant="secondary" icon={<ArrowLeft className="w-4 h-4" />} onClick={goBack} className="mb-4">
             Back to Modules
           </Button>
 
@@ -122,17 +146,10 @@ export default function ModuleVideoPage() {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Content - 2/3 width */}
           <div className="flex-1 lg:w-2/3">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              {/* Video Player */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 p-0 overflow-hidden">
                 <div className="relative bg-black aspect-video">
-                  {/* Video Element */}
                   <video
                     ref={videoRef}
                     className="w-full h-full"
@@ -152,80 +169,48 @@ export default function ModuleVideoPage() {
                       </div>
                     </div>
                   </video>
-                  
-                  {/* Custom Controls */}
+
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                    {/* Progress Bar */}
-                    <div 
-                      className="w-full bg-gray-600 h-2 rounded-full mb-4 cursor-pointer"
-                      onClick={handleSeek}
-                    >
-                      <div 
-                        className="bg-cyan-500 h-2 rounded-full transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
+                    <div className="w-full bg-gray-600 h-2 rounded-full mb-4 cursor-pointer" onClick={handleSeek}>
+                      <div className="bg-cyan-500 h-2 rounded-full transition-all" style={{ width: `${progress}%` }} />
                     </div>
-                    
-                    {/* Controls */}
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <button
-                          onClick={togglePlay}
-                          className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center hover:bg-cyan-400 transition-colors"
-                        >
-                          {isPlaying ? (
-                            <Pause className="w-5 h-5 text-white" />
-                          ) : (
-                            <Play className="w-5 h-5 text-white ml-0.5" />
-                          )}
+                        <button onClick={togglePlay} className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center hover:bg-cyan-400 transition-colors">
+                          {isPlaying ? <Pause className="w-5 h-5 text-white" /> : <Play className="w-5 h-5 text-white ml-0.5" />}
                         </button>
-                        
-                        <button
-                          onClick={() => setIsMuted(!isMuted)}
-                          className="text-gray-300 hover:text-white transition-colors"
-                        >
-                          {isMuted ? (
-                            <VolumeX className="w-5 h-5" />
-                          ) : (
-                            <Volume2 className="w-5 h-5" />
-                          )}
+
+                        <button onClick={() => setIsMuted(!isMuted)} className="text-gray-300 hover:text-white transition-colors">
+                          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                         </button>
-                        
-                        <div className="text-gray-300 text-sm">
-                          {formatTime(currentTime)} / {moduleData.video.duration}
-                        </div>
+
+                        <div className="text-gray-300 text-sm">{formatTime(currentTime)} / {moduleData.video.duration}</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </Card>
 
-              {/* Video Info */}
               <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="text-2xl font-bold text-white mb-2">Video Lesson</h2>
                     <p className="text-gray-400">Watch this video to understand the core concepts of threat detection fundamentals.</p>
                   </div>
-                  <div className="text-sm text-gray-300">
-                    Duration: {moduleData.video.duration}
-                  </div>
+                  <div className="text-sm text-gray-300">Duration: {moduleData.video.duration}</div>
                 </div>
               </Card>
 
-              {/* Transcript */}
               <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
                 <h3 className="text-xl font-semibold text-white mb-4">Transcript</h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
                   {moduleData.video.transcript.split('\n').map((line, index) => {
                     const [timestamp, ...textParts] = line.split(' - ')
                     const text = textParts.join(' - ')
-                    
                     return (
                       <div key={index} className="flex gap-4 p-3 rounded-lg hover:bg-gray-700/30 transition-colors">
-                        <span className="text-cyan-400 text-sm font-mono flex-shrink-0">
-                          {timestamp}
-                        </span>
+                        <span className="text-cyan-400 text-sm font-mono flex-shrink-0">{timestamp}</span>
                         <p className="text-gray-300 flex-1">{text}</p>
                       </div>
                     )
@@ -235,31 +220,18 @@ export default function ModuleVideoPage() {
             </motion.div>
           </div>
 
-          {/* Sidebar - 1/3 width */}
           <div className="lg:w-1/3 flex-shrink-0">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              {/* Progress Summary */}
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
               <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
                 <h3 className="text-lg font-semibold text-white mb-4">Video Progress</h3>
                 <div className="space-y-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-white mb-1">
-                      {Math.round(progress)}%
-                    </div>
-                    <div className="text-gray-400 text-sm">
-                      {formatTime(currentTime)} watched
-                    </div>
+                    <div className="text-2xl font-bold text-white mb-1">{Math.round(progress)}%</div>
+                    <div className="text-gray-400 text-sm">{formatTime(currentTime)} watched</div>
                   </div>
-                  
+
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${progress}%` }}
-                    />
+                    <div className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
                   </div>
 
                   {hasCompleted && (
@@ -271,43 +243,24 @@ export default function ModuleVideoPage() {
                 </div>
               </Card>
 
-              {/* Quick Navigation */}
               <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
                 <h3 className="text-lg font-semibold text-white mb-4">Continue Learning</h3>
                 <div className="space-y-2">
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={() => navigate(`/courses/${courseId}/modules/${moduleId}/content`)}
-                  >
+                  <Button variant="secondary" className="w-full justify-start" onClick={() => navigate(`/courses/${courseId}/modules/${moduleId}/content`)}>
                     Read Content Lesson
                   </Button>
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={goBack}
-                  >
+                  <Button variant="secondary" className="w-full justify-start" onClick={goBack}>
                     Back to Module List
                   </Button>
                 </div>
               </Card>
 
-              {/* Video Tips */}
               <Card className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50">
                 <h3 className="text-lg font-semibold text-white mb-4">Tips</h3>
                 <ul className="space-y-2 text-sm text-gray-300">
-                  <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
-                    <span>Take notes on key concepts</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
-                    <span>Pause and replay complex sections</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
-                    <span>Use transcript for quick reference</span>
-                  </li>
+                  <li className="flex items-start gap-2"><div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" /><span>Take notes on key concepts</span></li>
+                  <li className="flex items-start gap-2"><div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" /><span>Pause and replay complex sections</span></li>
+                  <li className="flex items-start gap-2"><div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" /><span>Use transcript for quick reference</span></li>
                 </ul>
               </Card>
             </motion.div>

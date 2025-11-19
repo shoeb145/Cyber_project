@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
-import ModuleCard from '../components/modules/ModuleCard'
+import ModuleCardBeforelogin from '../components/modules/ModuleCardBeforelogin'
 import { motion } from 'framer-motion'
 import { 
   CheckCircle, 
@@ -385,11 +385,11 @@ export default function Landing() {
         <Header />
 
         {/* top spacer for fixed header */}
-        <div className="h-16" />
+        <div className="h-1" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* ENHANCED HERO SECTION */}
-          <section id="home" className="min-h-[80vh] flex items-center justify-center py-20">
+          <section id="home" className="min-h-[80vh] flex items-center justify-center py-12">
             <div className="text-center space-y-8 max-w-4xl mx-auto">
               {/* Trust Badge */}
               <motion.div
@@ -821,7 +821,7 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <ModuleCard module={m} />
+                  <ModuleCardBeforelogin module={m} />
                 </motion.div>
               ))}
             </div>

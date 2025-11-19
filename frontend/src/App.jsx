@@ -81,7 +81,7 @@ console.log(user)
           path="/courses/:courseId/:moduleId/learn"
           element={
             <PrivateRoute allowedRoles={["user", "admin"]}>
-              <ModuleContentPage />
+              <ModuleContentPage user={user} />
             </PrivateRoute>
           }
         />
